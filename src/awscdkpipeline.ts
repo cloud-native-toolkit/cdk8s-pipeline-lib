@@ -7,7 +7,7 @@ import { Octokit } from 'octokit';
 /**
  * Initialization properties for the AWSCDKPipelineChart
  */
-interface AWSCDKPipelineChartProps extends ChartProps {
+export interface AWSCDKPipelineChartProps extends ChartProps {
   readonly params?: string[];
 }
 

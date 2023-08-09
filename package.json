@@ -1,8 +1,8 @@
 {
-  "name": "cdk8s-pipeline-lib",
+  "name": "cdk8s-pipelines-lib",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cloud-native-toolkit/cdk8s-pipeline-lib.git"
+    "url": "https://github.com/cloud-native-toolkit/cdk8s-pipelines-lib.git"
   },
   "scripts": {
     "build": "npx projen build",

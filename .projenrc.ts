@@ -31,6 +31,6 @@ const project = new cdk8s.ConstructLibraryCdk8s({
   ],
 });
 project.addTask('prepare', {
-  exec: 'npx projen build',
+  exec: 'npx projen compile',
 });
 project.synth();
