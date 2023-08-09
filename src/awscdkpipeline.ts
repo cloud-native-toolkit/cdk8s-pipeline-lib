@@ -88,14 +88,14 @@ export class AWSCDKPipeline {
       owner: config.owner!,
       repo: config.repo!,
       tag: config.release!,
-    }).then(function (resp) {
-      const releaseId = resp.data.id;
+    }).then(function (releaseResponse) {
+      const releaseId = releaseResponse.data.id;
       octokit.rest.repos.listReleaseAssets({
         owner: config.owner!,
         repo: config.repo!,
         release_id: releaseId,
-      }).then(function (resp) {
-        const asset = resp.data.find(a => a.name == `${config.stackName}.template.json`);
+      }).then(function (templateResponse) {
+        const asset = templateResponse.data.find(a => a.name == `${config.stackName}.template.json`);
         const assetId = asset?.id;
         // Now that I have my asset ID, I can download the asset...
         octokit.rest.repos.getReleaseAsset({
@@ -105,8 +105,8 @@ export class AWSCDKPipeline {
           headers: {
             accept: 'application/octet-stream',
           },
-        }).then(function (resp) {
-          const template = JSON.parse(new TextDecoder().decode(resp.data as unknown as ArrayBuffer));
+        }).then(function (assetResponse) {
+          const template = JSON.parse(new TextDecoder().decode(assetResponse.data as unknown as ArrayBuffer));
           const app = new App();
           const templateParams: string[] = new Array<string>();
           // Now, we are going to automagically add the AWS-required parameters before adding the
@@ -122,8 +122,14 @@ export class AWSCDKPipeline {
             params: templateParams,
           });
           app.synth();
+        }).catch(function (assetErr) {
+          console.error(assetErr);
         });
+      }).catch(function (templateErr) {
+        console.error(templateErr);
       });
+    }).catch(function (releaseErr) {
+      console.error(releaseErr);
     });
   }
 }

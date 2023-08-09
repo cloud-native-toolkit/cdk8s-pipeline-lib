@@ -24,10 +24,6 @@
       "type": "build"
     },
     {
-      "name": "axios",
-      "type": "build"
-    },
-    {
       "name": "cdk8s",
       "version": "2.30.0",
       "type": "build"
@@ -91,10 +87,6 @@
       "type": "build"
     },
     {
-      "name": "octokit",
-      "type": "build"
-    },
-    {
       "name": "projen",
       "type": "build"
     },
@@ -116,8 +108,16 @@
       "type": "build"
     },
     {
+      "name": "axios",
+      "type": "bundled"
+    },
+    {
       "name": "cdk8s-pipelines",
       "version": "github:cloud-native-toolkit/cdk8s-pipelines",
+      "type": "bundled"
+    },
+    {
+      "name": "octokit",
       "type": "bundled"
     },
     {

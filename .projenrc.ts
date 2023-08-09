@@ -10,14 +10,14 @@ const project = new cdk8s.ConstructLibraryCdk8s({
   projenrcTs: true,
   bundledDeps: [
     'cdk8s-pipelines@github:cloud-native-toolkit/cdk8s-pipelines',
+    'octokit',
+    'axios',
   ],
   peerDeps: [
     'cdk8s',
     'constructs',
   ],
   devDeps: [
-    'axios',
-    'octokit',
     '@cdk8s/projen-common',
   ],
   keywords: [
