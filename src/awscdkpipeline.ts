@@ -1,0 +1,129 @@
+import { TextDecoder } from 'node:util';
+import { App, Chart, ChartProps } from 'cdk8s';
+import { Pipeline } from 'cdk8s-pipelines';
+import { Construct } from 'constructs';
+import { Octokit } from 'octokit';
+
+/**
+ * Initialization properties for the AWSCDKPipelineChart
+ */
+interface AWSCDKPipelineChartProps extends ChartProps {
+  readonly params?: string[];
+}
+
+/**
+ * The chart for creating a Tekton Pipeline that will use an AWS CDK project
+ * to create resources in AWS for re-usable artifacts.
+ */
+export class AWSCDKPipelineChart extends Chart {
+  /**
+     * Initializes an instance of the AWSCDKPipelineChart.
+     *
+     * @param scope
+     * @param id
+     * @param props
+     */
+  constructor(scope: Construct, id: string, props: AWSCDKPipelineChartProps = {}) {
+    super(scope, id, props);
+    // Create the pipeline that will run in the OpenShift or K8s cluster.
+    const pipeline = new Pipeline(this, 'aws-cdk-pipeline', {
+      name: 'aws-cdk-pipeline',
+    });
+    props.params?.forEach(s => {
+      pipeline.addStringParam(s);
+    });
+  }
+}
+
+/**
+ * Contains the information for the GitHub repo and the stack so we can go get
+ * it and generate the AWS CDK pipeline.
+ */
+export interface GitRepoConfig {
+  /**
+     * The URL for the GitHub or GHE API. The value should look like https://api.github.com or
+     * https://github.mycompany.com/api/v3.
+     */
+  readonly ghUrl?: string;
+  /**
+     * The owner of the GitHub repository.
+     */
+  readonly owner?: string;
+  /**
+     * The release tag for the release in which the AWS CDK template should be found.
+     */
+  readonly release?: string;
+  /**
+     * The name of the repository.
+     */
+  readonly repo?: string;
+  /**
+     * The name of the AWS CDK stack. This should be a generated template that is included
+     * in the release.
+     */
+  readonly stackName?: string;
+  /**
+     * The personal access token (PAT) for accessing the library in GitHub.
+     */
+  readonly token?: string;
+}
+
+/**
+ * Creator for the AWSCDKPipelineChart
+ */
+export class AWSCDKPipeline {
+
+  /**
+     * Generates the AWS CDK Pipeline (AWSCDKPipelineChart) based on the actual project
+     * located in GitHub and specified by the configuration.
+     * @param config
+     */
+  public static createFrom(config: GitRepoConfig): void {
+    const octokit = new Octokit({
+      auth: config.token,
+      baseUrl: config.ghUrl,
+    });
+
+    octokit.rest.repos.getReleaseByTag({
+      owner: config.owner!,
+      repo: config.repo!,
+      tag: config.release!,
+    }).then(function (resp) {
+      const releaseId = resp.data.id;
+      octokit.rest.repos.listReleaseAssets({
+        owner: config.owner!,
+        repo: config.repo!,
+        release_id: releaseId,
+      }).then(function (resp) {
+        const asset = resp.data.find(a => a.name == `${config.stackName}.template.json`);
+        const assetId = asset?.id;
+        // Now that I have my asset ID, I can download the asset...
+        octokit.rest.repos.getReleaseAsset({
+          owner: config.owner!,
+          repo: config.repo!,
+          asset_id: Number(assetId),
+          headers: {
+            accept: 'application/octet-stream',
+          },
+        }).then(function (resp) {
+          const template = JSON.parse(new TextDecoder().decode(resp.data as unknown as ArrayBuffer));
+          const app = new App();
+          const templateParams: string[] = new Array<string>();
+          // Now, we are going to automagically add the AWS-required parameters before adding the
+          // template parameters.
+          templateParams.push('AwsAccountId');
+          templateParams.push('AwsAccessKeyId');
+          templateParams.push('AwsSecretKeyId');
+          templateParams.push('AwsRegion');
+          Object.keys(template.Parameters).forEach(key => {
+            templateParams.push(key);
+          });
+          new AWSCDKPipelineChart(app, 'example-cdk8s-pipeline', {
+            params: templateParams,
+          });
+          app.synth();
+        });
+      });
+    });
+  }
+}
