@@ -1,7 +1,7 @@
 import { cdk8s } from 'projen';
 const project = new cdk8s.ConstructLibraryCdk8s({
-  name: 'cdk8s-pipeline-lib',
-  repositoryUrl: 'https://github.com/cloud-native-toolkit/cdk8s-pipeline-lib.git',
+  name: 'cdk8s-pipelines-lib',
+  repositoryUrl: 'https://github.com/cloud-native-toolkit/cdk8s-pipelines-lib.git',
   defaultReleaseBranch: 'main',
   author: 'Nathan Good',
   authorAddress: 'nathan.good@ibm.com',
