@@ -8,6 +8,7 @@ const project = new cdk8s.ConstructLibraryCdk8s({
   authorAddress: 'nathan.good@ibm.com',
   cdk8sVersion: '2.30.0',
   jsiiVersion: '~5.0.0',
+  workflowNodeVersion: '18.x',
   projenrcTs: true,
   // deps: [
   //   'cdk8s-pipelines@^0.0.3',
