@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AWSCDKPipelineTest AWSCDKPipeline 1`] = `
+[
+  {
+    "apiVersion": "tekton.dev/v1beta1",
+    "kind": "Pipeline",
+    "metadata": {
+      "name": "deploy-cdk-project",
+    },
+    "spec": {
+      "description": "A pipeline for deploying a AWS CDK project from a GitHub repository to a cluster.",
+      "params": [
+        {
+          "name": "AwsAccountId",
+          "type": "string",
+        },
+        {
+          "name": "AwsAccessKeyId",
+          "type": "string",
+        },
+        {
+          "name": "AwsSecretKeyId",
+          "type": "string",
+        },
+        {
+          "name": "AwsRegion",
+          "type": "string",
+        },
+      ],
+      "tasks": [
+        {
+          "name": "fetch-project",
+          "params": [],
+          "taskRef": {
+            "name": "git-clone",
+          },
+          "workspaces": [
+            {
+              "name": "output",
+              "workspace": "shared-data",
+            },
+            {
+              "name": "ssh-creds",
+              "workspace": "ssh-credentials",
+            },
+          ],
+        },
+        {
+          "name": "synth-cdk-pipeline",
+          "params": [
+            {
+              "name": "AwsAccountId",
+              "value": "$(params.AwsAccountId)",
+            },
+            {
+              "name": "AwsAccessKeyId",
+              "value": "$(params.AwsAccessKeyId)",
+            },
+            {
+              "name": "AwsSecretKeyId",
+              "value": "$(params.AwsSecretKeyId)",
+            },
+            {
+              "name": "AwsRegion",
+              "value": "$(params.AwsRegion)",
+            },
+          ],
+          "taskRef": {
+            "name": "aws-cdk-synth",
+          },
+          "workspaces": [
+            {
+              "name": "projectdata",
+              "workspace": "shared-data",
+            },
+          ],
+        },
+      ],
+      "workspaces": [
+        {
+          "description": "The AWS CDK project files.",
+          "name": "shared-data",
+        },
+        {
+          "description": "The location of the SSH keys and credentials",
+          "name": "ssh-credentials",
+        },
+        {
+          "description": "The AWS CDK project files",
+          "name": "shared-data",
+        },
+      ],
+    },
+  },
+]
+`;

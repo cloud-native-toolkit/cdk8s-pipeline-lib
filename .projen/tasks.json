@@ -192,14 +192,6 @@
       "name": "pre-compile",
       "description": "Prepare the project for compilation"
     },
-    "prepare": {
-      "name": "prepare",
-      "steps": [
-        {
-          "exec": "npx projen compile"
-        }
-      ]
-    },
     "release": {
       "name": "release",
       "description": "Prepare a release from \"main\" branch",
@@ -273,13 +265,13 @@
           "exec": "yarn upgrade npm-check-updates"
         },
         {
-          "exec": "npm-check-updates --upgrade --target=minor --filter=@cdk8s/projen-common,@types/jest,@types/node,@typescript-eslint/eslint-plugin,@typescript-eslint/parser,eslint-import-resolver-node,eslint-import-resolver-typescript,eslint-plugin-import,eslint,jest,jest-junit,jsii-diff,jsii-docgen,jsii-pacmak,npm-check-updates,projen,standard-version,ts-jest,ts-node,typescript,axios,octokit,cdk8s,constructs"
+          "exec": "npm-check-updates --upgrade --target=minor --filter=@cdk8s/projen-common,@types/jest,@types/node,@typescript-eslint/eslint-plugin,@typescript-eslint/parser,eslint-import-resolver-node,eslint-import-resolver-typescript,eslint-plugin-import,eslint,jest,jest-junit,jsii-diff,jsii-docgen,jsii-pacmak,npm-check-updates,projen,standard-version,ts-jest,ts-node,typescript,axios,cdk8s-pipelines,octokit,cdk8s,constructs"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @cdk8s/projen-common @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import eslint jest jest-junit jsii-diff jsii-docgen jsii-pacmak npm-check-updates projen standard-version ts-jest ts-node typescript axios octokit cdk8s constructs"
+          "exec": "yarn upgrade @cdk8s/projen-common @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import eslint jest jest-junit jsii-diff jsii-docgen jsii-pacmak npm-check-updates projen standard-version ts-jest ts-node typescript axios cdk8s-pipelines octokit cdk8s constructs"
         },
         {
           "exec": "npx projen"
