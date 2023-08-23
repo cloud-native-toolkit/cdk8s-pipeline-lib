@@ -113,7 +113,6 @@
     },
     {
       "name": "cdk8s-pipelines",
-      "version": "github:cloud-native-toolkit/cdk8s-pipelines",
       "type": "bundled"
     },
     {
