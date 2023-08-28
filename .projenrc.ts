@@ -10,16 +10,13 @@ const project = new cdk8s.ConstructLibraryCdk8s({
   jsiiVersion: '~5.0.0',
   workflowNodeVersion: '18.x',
   projenrcTs: true,
-  // deps: [
-  //   'cdk8s-pipelines@^0.0.3',
-  // ],
   bundledDeps: [
     'octokit',
     'axios',
-    'cdk8s-pipelines',
   ],
   peerDeps: [
     'cdk8s',
+    'cdk8s-pipelines',
     'constructs',
   ],
   devDeps: [
@@ -35,4 +32,6 @@ const project = new cdk8s.ConstructLibraryCdk8s({
     '.idea/',
   ],
 });
+// Create the tekton hub tasks
+project.projectBuild.preCompileTask.exec('npx ts-node src/tektonHub/CreateTektonHubLink.ts');
 project.synth();

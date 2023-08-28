@@ -1,0 +1,109 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`tektonTaskResolver resolverWithWorkspace 1`] = `
+TektonHubTask {
+  "taskBuild": PipelineTaskBuilder {
+    "_name": "gogit",
+    "_parameters": [
+      {
+        "defaultValue": "github",
+        "name": "$(param-provider)",
+        "refName": "provider",
+        "type": "string",
+        "value": "github",
+      },
+      {
+        "defaultValue": "",
+        "name": "$(param-repo)",
+        "refName": "repo",
+        "type": "string",
+        "value": undefined,
+      },
+      {
+        "defaultValue": "",
+        "name": "$(param-username)",
+        "refName": "username",
+        "type": "string",
+        "value": undefined,
+      },
+      {
+        "defaultValue": "",
+        "name": "$(param-token)",
+        "refName": "token",
+        "type": "string",
+        "value": undefined,
+      },
+      {
+        "defaultValue": "",
+        "name": "$(param-pull_request_number)",
+        "refName": "pull_request_number",
+        "type": "string",
+        "value": undefined,
+      },
+      {
+        "defaultValue": "ghcr.io/linuxsuren/gogit:v0.0.1@sha256:33e06228b645dd46102c0870c11d420a213cdab84b7a0700dcb6da6ce8b530d6",
+        "name": "$(param-gogit-image)",
+        "refName": "gogit-image",
+        "type": "string",
+        "value": "ghcr.io/linuxsuren/gogit:v0.0.1@sha256:33e06228b645dd46102c0870c11d420a213cdab84b7a0700dcb6da6ce8b530d6",
+      },
+    ],
+    "_taskRefName": "gogit",
+  },
+  "url": "loaded git-cli yaml content",
+}
+`;
+
+exports[`tektonTaskResolver resolverWithoutWorkspace 1`] = `
+TektonHubTask {
+  "taskBuild": PipelineTaskBuilder {
+    "_name": "gogit",
+    "_parameters": [
+      {
+        "defaultValue": "github",
+        "name": "$(param-provider)",
+        "refName": "provider",
+        "type": "string",
+        "value": "github",
+      },
+      {
+        "defaultValue": "",
+        "name": "$(param-repo)",
+        "refName": "repo",
+        "type": "string",
+        "value": undefined,
+      },
+      {
+        "defaultValue": "",
+        "name": "$(param-username)",
+        "refName": "username",
+        "type": "string",
+        "value": undefined,
+      },
+      {
+        "defaultValue": "",
+        "name": "$(param-token)",
+        "refName": "token",
+        "type": "string",
+        "value": undefined,
+      },
+      {
+        "defaultValue": "",
+        "name": "$(param-pull_request_number)",
+        "refName": "pull_request_number",
+        "type": "string",
+        "value": undefined,
+      },
+      {
+        "defaultValue": "ghcr.io/linuxsuren/gogit:v0.0.1@sha256:33e06228b645dd46102c0870c11d420a213cdab84b7a0700dcb6da6ce8b530d6",
+        "name": "$(param-gogit-image)",
+        "refName": "gogit-image",
+        "type": "string",
+        "value": "ghcr.io/linuxsuren/gogit:v0.0.1@sha256:33e06228b645dd46102c0870c11d420a213cdab84b7a0700dcb6da6ce8b530d6",
+      },
+    ],
+    "_taskRefName": "gogit",
+  },
+  "url": "loaded gogit yaml content",
+}
+`;

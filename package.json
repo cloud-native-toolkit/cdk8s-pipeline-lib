@@ -40,6 +40,7 @@
     "@typescript-eslint/eslint-plugin": "^5",
     "@typescript-eslint/parser": "^5",
     "cdk8s": "2.30.0",
+    "cdk8s-pipelines": "0.0.4",
     "constructs": "10.0.0",
     "eslint": "^8",
     "eslint-import-resolver-node": "^0.3.9",
@@ -61,16 +62,15 @@
   },
   "peerDependencies": {
     "cdk8s": "^2.30.0",
+    "cdk8s-pipelines": "^0.0.4",
     "constructs": "^10.0.0"
   },
   "dependencies": {
     "axios": "^1.4.0",
-    "cdk8s-pipelines": "^0.0.3",
     "octokit": "^3.1.0"
   },
   "bundledDependencies": [
     "axios",
-    "cdk8s-pipelines",
     "octokit"
   ],
   "keywords": [
