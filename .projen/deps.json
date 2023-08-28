@@ -24,6 +24,10 @@
       "type": "build"
     },
     {
+      "name": "cdk8s-pipelines",
+      "type": "build"
+    },
+    {
       "name": "cdk8s",
       "version": "2.30.0",
       "type": "build"
@@ -112,12 +116,12 @@
       "type": "bundled"
     },
     {
-      "name": "cdk8s-pipelines",
+      "name": "octokit",
       "type": "bundled"
     },
     {
-      "name": "octokit",
-      "type": "bundled"
+      "name": "cdk8s-pipelines",
+      "type": "peer"
     },
     {
       "name": "cdk8s",

@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`testTekonFetch testFileCreationData 1`] = `
+[
+  "import { TektonHubTask } from './tektonHubTasksResolver';",
+  "export const git_cli = new TektonHubTask('https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-cli/0.4/git-cli.yaml').build();",
+  "export const gogit = new TektonHubTask('https://raw.githubusercontent.com/tektoncd/catalog/main/task/gogit/0.1/gogit.yaml').build();",
+  "export const golang_build = new TektonHubTask('https://raw.githubusercontent.com/tektoncd/catalog/main/task/golang-build/0.3/golang-build.yaml').build();",
+  "export const jenkins = new TektonHubTask('https://raw.githubusercontent.com/tektoncd/catalog/main/task/jenkins/0.1/jenkins.yaml').build();",
+  "export const pull_request = new TektonHubTask('https://raw.githubusercontent.com/tektoncd/catalog/main/task/pull-request/0.1/pull-request.yaml').build();",
+]
+`;
