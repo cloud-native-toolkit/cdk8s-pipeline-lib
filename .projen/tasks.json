@@ -193,7 +193,7 @@
       "description": "Prepare the project for compilation",
       "steps": [
         {
-          "exec": "npm run build:tekon-hub-task"
+          "exec": "npx ts-node src/tektonHub/CreateTektonHubLink.ts"
         }
       ]
     },

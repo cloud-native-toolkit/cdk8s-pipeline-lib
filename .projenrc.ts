@@ -33,5 +33,5 @@ const project = new cdk8s.ConstructLibraryCdk8s({
   ],
 });
 // Create the tekton hub tasks
-project.projectBuild.preCompileTask.exec('npm run build:tekon-hub-task');
+project.projectBuild.preCompileTask.exec('npx ts-node src/tektonHub/CreateTektonHubLink.ts');
 project.synth();
