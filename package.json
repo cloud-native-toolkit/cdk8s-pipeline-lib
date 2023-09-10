@@ -62,7 +62,7 @@
   },
   "peerDependencies": {
     "cdk8s": "^2.30.0",
-    "cdk8s-pipelines": "^0.0.7",
+    "cdk8s-pipelines": "^0.0.8",
     "constructs": "^10.0.0"
   },
   "dependencies": {
