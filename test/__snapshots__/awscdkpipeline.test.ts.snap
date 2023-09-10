@@ -15,6 +15,18 @@ exports[`AWSCDKPipelineTest AWSCDKPipeline 1`] = `
           "name": "AwsAccountId",
           "type": "string",
         },
+        {
+          "name": "AwsAccessKeyId",
+          "type": "string",
+        },
+        {
+          "name": "AwsSecretKeyId",
+          "type": "string",
+        },
+        {
+          "name": "AwsRegion",
+          "type": "string",
+        },
       ],
       "tasks": [
         {
@@ -69,6 +81,10 @@ exports[`AWSCDKPipelineTest AWSCDKPipeline 1`] = `
         {
           "description": "The AWS CDK project files.",
           "name": "shared-data",
+        },
+        {
+          "description": "The location of the SSH keys and credentials",
+          "name": "ssh-credentials",
         },
       ],
     },
