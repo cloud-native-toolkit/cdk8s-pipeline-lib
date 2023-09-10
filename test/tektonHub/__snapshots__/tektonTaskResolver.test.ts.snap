@@ -2,53 +2,100 @@
 
 exports[`tektonTaskResolver resolverWithWorkspace 1`] = `
 TektonHubTask {
-  "taskBuild": PipelineTaskBuilder {
+  "_id": "gogit",
+  "_scope": App {
+    "node": Node {
+      "_children": {},
+      "_context": {},
+      "_dependencies": Set {},
+      "_locked": false,
+      "_metadata": [],
+      "_validations": [],
+      "host": [Circular],
+      "id": "",
+      "scope": undefined,
+    },
+    "outdir": "dist",
+    "outputFileExtension": ".k8s.yaml",
+    "recordConstructMetadata": false,
+    "yamlOutputType": 1,
+    Symbol(@aws-cdk/core.DependableTrait): {
+      "dependencyRoots": [
+        [Circular],
+      ],
+    },
+  },
+  "_steps": [],
+  "taskBuild": TaskBuilder {
+    "_id": "gogit",
     "_name": "gogit",
-    "_parameters": [
-      {
-        "defaultValue": "github",
-        "name": "$(param-provider)",
-        "refName": "provider",
-        "type": "string",
-        "value": "github",
+    "_params": [
+      ParameterBuilder {
+        "_defaultValue": "github",
+        "_logicalID": "provider",
+        "_name": "provider",
+        "_type": "string",
+        "_value": "$(params.provider)",
       },
-      {
-        "defaultValue": "",
-        "name": "$(param-repo)",
-        "refName": "repo",
-        "type": "string",
-        "value": undefined,
+      ParameterBuilder {
+        "_defaultValue": "",
+        "_logicalID": "repo",
+        "_name": "repo",
+        "_type": "string",
+        "_value": "$(params.repo)",
       },
-      {
-        "defaultValue": "",
-        "name": "$(param-username)",
-        "refName": "username",
-        "type": "string",
-        "value": undefined,
+      ParameterBuilder {
+        "_defaultValue": "",
+        "_logicalID": "username",
+        "_name": "username",
+        "_type": "string",
+        "_value": "$(params.username)",
       },
-      {
-        "defaultValue": "",
-        "name": "$(param-token)",
-        "refName": "token",
-        "type": "string",
-        "value": undefined,
+      ParameterBuilder {
+        "_defaultValue": "",
+        "_logicalID": "token",
+        "_name": "token",
+        "_type": "string",
+        "_value": "$(params.token)",
       },
-      {
-        "defaultValue": "",
-        "name": "$(param-pull_request_number)",
-        "refName": "pull_request_number",
-        "type": "string",
-        "value": undefined,
+      ParameterBuilder {
+        "_defaultValue": "",
+        "_logicalID": "pull_request_number",
+        "_name": "pull_request_number",
+        "_type": "string",
+        "_value": "$(params.pull_request_number)",
       },
-      {
-        "defaultValue": "ghcr.io/linuxsuren/gogit:v0.0.1@sha256:33e06228b645dd46102c0870c11d420a213cdab84b7a0700dcb6da6ce8b530d6",
-        "name": "$(param-gogit-image)",
-        "refName": "gogit-image",
-        "type": "string",
-        "value": "ghcr.io/linuxsuren/gogit:v0.0.1@sha256:33e06228b645dd46102c0870c11d420a213cdab84b7a0700dcb6da6ce8b530d6",
+      ParameterBuilder {
+        "_defaultValue": "ghcr.io/linuxsuren/gogit:v0.0.1@sha256:33e06228b645dd46102c0870c11d420a213cdab84b7a0700dcb6da6ce8b530d6",
+        "_logicalID": "gogit-image",
+        "_name": "gogit-image",
+        "_type": "string",
+        "_value": "$(params.gogit-image)",
       },
     ],
-    "_taskRefName": "gogit",
+    "_scope": App {
+      "node": Node {
+        "_children": {},
+        "_context": {},
+        "_dependencies": Set {},
+        "_locked": false,
+        "_metadata": [],
+        "_validations": [],
+        "host": [Circular],
+        "id": "",
+        "scope": undefined,
+      },
+      "outdir": "dist",
+      "outputFileExtension": ".k8s.yaml",
+      "recordConstructMetadata": false,
+      "yamlOutputType": 1,
+      Symbol(@aws-cdk/core.DependableTrait): {
+        "dependencyRoots": [
+          [Circular],
+        ],
+      },
+    },
+    "_steps": [],
   },
   "url": "loaded git-cli yaml content",
 }
@@ -56,53 +103,100 @@ TektonHubTask {
 
 exports[`tektonTaskResolver resolverWithoutWorkspace 1`] = `
 TektonHubTask {
-  "taskBuild": PipelineTaskBuilder {
+  "_id": "gogit",
+  "_scope": App {
+    "node": Node {
+      "_children": {},
+      "_context": {},
+      "_dependencies": Set {},
+      "_locked": false,
+      "_metadata": [],
+      "_validations": [],
+      "host": [Circular],
+      "id": "",
+      "scope": undefined,
+    },
+    "outdir": "dist",
+    "outputFileExtension": ".k8s.yaml",
+    "recordConstructMetadata": false,
+    "yamlOutputType": 1,
+    Symbol(@aws-cdk/core.DependableTrait): {
+      "dependencyRoots": [
+        [Circular],
+      ],
+    },
+  },
+  "_steps": [],
+  "taskBuild": TaskBuilder {
+    "_id": "gogit",
     "_name": "gogit",
-    "_parameters": [
-      {
-        "defaultValue": "github",
-        "name": "$(param-provider)",
-        "refName": "provider",
-        "type": "string",
-        "value": "github",
+    "_params": [
+      ParameterBuilder {
+        "_defaultValue": "github",
+        "_logicalID": "provider",
+        "_name": "provider",
+        "_type": "string",
+        "_value": "$(params.provider)",
       },
-      {
-        "defaultValue": "",
-        "name": "$(param-repo)",
-        "refName": "repo",
-        "type": "string",
-        "value": undefined,
+      ParameterBuilder {
+        "_defaultValue": "",
+        "_logicalID": "repo",
+        "_name": "repo",
+        "_type": "string",
+        "_value": "$(params.repo)",
       },
-      {
-        "defaultValue": "",
-        "name": "$(param-username)",
-        "refName": "username",
-        "type": "string",
-        "value": undefined,
+      ParameterBuilder {
+        "_defaultValue": "",
+        "_logicalID": "username",
+        "_name": "username",
+        "_type": "string",
+        "_value": "$(params.username)",
       },
-      {
-        "defaultValue": "",
-        "name": "$(param-token)",
-        "refName": "token",
-        "type": "string",
-        "value": undefined,
+      ParameterBuilder {
+        "_defaultValue": "",
+        "_logicalID": "token",
+        "_name": "token",
+        "_type": "string",
+        "_value": "$(params.token)",
       },
-      {
-        "defaultValue": "",
-        "name": "$(param-pull_request_number)",
-        "refName": "pull_request_number",
-        "type": "string",
-        "value": undefined,
+      ParameterBuilder {
+        "_defaultValue": "",
+        "_logicalID": "pull_request_number",
+        "_name": "pull_request_number",
+        "_type": "string",
+        "_value": "$(params.pull_request_number)",
       },
-      {
-        "defaultValue": "ghcr.io/linuxsuren/gogit:v0.0.1@sha256:33e06228b645dd46102c0870c11d420a213cdab84b7a0700dcb6da6ce8b530d6",
-        "name": "$(param-gogit-image)",
-        "refName": "gogit-image",
-        "type": "string",
-        "value": "ghcr.io/linuxsuren/gogit:v0.0.1@sha256:33e06228b645dd46102c0870c11d420a213cdab84b7a0700dcb6da6ce8b530d6",
+      ParameterBuilder {
+        "_defaultValue": "ghcr.io/linuxsuren/gogit:v0.0.1@sha256:33e06228b645dd46102c0870c11d420a213cdab84b7a0700dcb6da6ce8b530d6",
+        "_logicalID": "gogit-image",
+        "_name": "gogit-image",
+        "_type": "string",
+        "_value": "$(params.gogit-image)",
       },
     ],
-    "_taskRefName": "gogit",
+    "_scope": App {
+      "node": Node {
+        "_children": {},
+        "_context": {},
+        "_dependencies": Set {},
+        "_locked": false,
+        "_metadata": [],
+        "_validations": [],
+        "host": [Circular],
+        "id": "",
+        "scope": undefined,
+      },
+      "outdir": "dist",
+      "outputFileExtension": ".k8s.yaml",
+      "recordConstructMetadata": false,
+      "yamlOutputType": 1,
+      Symbol(@aws-cdk/core.DependableTrait): {
+        "dependencyRoots": [
+          [Circular],
+        ],
+      },
+    },
+    "_steps": [],
   },
   "url": "loaded gogit yaml content",
 }

@@ -1,37 +1,43 @@
 import { Yaml } from 'cdk8s';
-import { PipelineTaskBuilder } from 'cdk8s-pipelines';
+import { ParameterBuilder, TaskBuilder, WorkspaceBuilder } from 'cdk8s-pipelines';
+import { Construct } from 'constructs';
 import { TektonYaml } from './tasks';
 
 /**
  * This class handles turning a URL that points the YAML for the Tekton Hub Task into a PipelineTask
  */
-export class TektonHubTask extends PipelineTaskBuilder {
+export class TektonHubTask extends TaskBuilder {
   url: string;
-  taskBuild: PipelineTaskBuilder;
+  taskBuild: TaskBuilder;
   /**
    * Creates a new Instance of TektonHubTask with a URL that points to the Raw YAML for the task.
    * @link https://hub.tekton.dev/
+   * @param scope
+   * @param id
    * @param url string Url to the raw yaml for a Tekton Hub Task (i.e https://raw.githubusercontent.com/tektoncd/catalog/main/task/yq/0.4/yq.yaml)
    */
-  constructor(url: string) {
-    super();
+  constructor(scope: Construct, id: string, url: string) {
+    super(scope, id);
     this.url = url;
-    this.taskBuild = new PipelineTaskBuilder();
+    this.taskBuild = new TaskBuilder(scope, id);
   }
   private parseYAML(): Boolean {
     const yamlData = this.readYamlFromUrl();
     this.taskBuild.withName(yamlData.metadata.name);
-    this.taskBuild.withTaskReference(yamlData.metadata.name);
     const workspaces = yamlData.spec.workspaces;
     if (workspaces !== undefined && workspaces?.length !== 0) {
       workspaces.forEach(workspace => {
-        this.taskBuild.withWorkspace(workspace.name, workspace.name, workspace.description);
+        this.taskBuild.withWorkspace(new WorkspaceBuilder(workspace.name)
+          .withName(workspace.name)
+          .withDescription(workspace.description));
       });
     }
     const params = yamlData.spec.params;
     if (params !== undefined && params.length !== 0) {
       params.forEach(param => {
-        this.taskBuild.withStringParam(`$(param-${param.name})`, param.name, param.default, param.default);
+        this.taskBuild.withStringParam(new ParameterBuilder(param.name)
+          .withDefaultValue(param.default)
+          .withPiplineParameter(param.name, param.default));
       });
     }
     return true;
@@ -48,9 +54,9 @@ export class TektonHubTask extends PipelineTaskBuilder {
   }
   /**
    * Returns an instance of PipelineTaskBuilder with the corresponding Tekton Hub Task Link.
-   * @returns PipelineTaskBuilder
+   * @returns TaskBuilder
    */
-  public build(): PipelineTaskBuilder {
+  public build(): TaskBuilder {
     this.parseYAML();
     return this.taskBuild;
   }

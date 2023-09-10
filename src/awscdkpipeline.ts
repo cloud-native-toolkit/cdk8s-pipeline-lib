@@ -1,6 +1,6 @@
 import { TextDecoder } from 'node:util';
 import { App, Chart, ChartProps } from 'cdk8s';
-import { PipelineBuilder, PipelineTaskBuilder } from 'cdk8s-pipelines';
+import { ParameterBuilder, PipelineBuilder, TaskBuilder, WorkspaceBuilder } from 'cdk8s-pipelines';
 import { Construct } from 'constructs';
 import { Octokit } from 'octokit';
 
@@ -35,21 +35,26 @@ export class AWSCDKPipelineChart extends Chart {
     const pipeline = new PipelineBuilder(this, 'aws-cdk-pipeline')
       .withName('deploy-cdk-project')
       .withDescription('A pipeline for deploying a AWS CDK project from a GitHub repository to a cluster.')
-      .withTask(new PipelineTaskBuilder()
+      .withTask(new TaskBuilder(this, 'git-clone')
         .withName('fetch-project')
-        .withTaskReference('git-clone')
-        .withWorkspace('output', 'shared-data', 'The AWS CDK project files.')
-        .withWorkspace('ssh-creds', 'ssh-credentials', 'The location of the SSH keys and credentials'),
-      );
+        // .withWorkspace('ssh-creds', 'ssh-credentials', 'The location of the SSH keys and credentials'),
+        .withWorkspace(new WorkspaceBuilder('output')
+          .withName('shared-data')
+          .withDescription('The AWS CDK project files.'))
+        .withWorkspace(new WorkspaceBuilder('ssh-creds')
+          .withName('ssh-credentials')
+          .withDescription('The location of the SSH keys and credentials')));
 
     // Now build out the
-    const awsCdkTask = new PipelineTaskBuilder()
+    const awsCdkTask = new TaskBuilder(this, 'aws-cdk-synth')
       .withName('synth-cdk-pipeline')
-      .withTaskReference('aws-cdk-synth')
-      .withWorkspace('projectdata', 'shared-data', 'The AWS CDK project files');
+      .withWorkspace(new WorkspaceBuilder('projectdata')
+        .withName('shared-data')
+        .withDescription('The AWS CDK project files'));
 
     props.params?.forEach((s) => {
-      awsCdkTask.withStringParam(s, s, `$(params.${s})`, '');
+      awsCdkTask.withStringParam(new ParameterBuilder(s)
+        .withPiplineParameter(s));
     });
     pipeline.withTask(awsCdkTask);
     pipeline.buildPipeline();

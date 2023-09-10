@@ -49,7 +49,7 @@ describe('testTekonFetch', () => {
       expect(data).toMatchSnapshot();
     });
     const tektonBuildFile = await tetkontHubLink.build();
-    expect(logSpy).toHaveBeenCalledWith('6 Tekton Hub task created.');
+    expect(logSpy).toHaveBeenCalledWith('8 Tekton Hub task created.');
     expect(tektonBuildFile).toBeTruthy;
   });
 
