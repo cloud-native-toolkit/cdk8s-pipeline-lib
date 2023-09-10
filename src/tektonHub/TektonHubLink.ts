@@ -39,6 +39,8 @@ export class TektonHubLink {
       // Let's create the tektonHubTask.ts
       // The following code is creating the imports for the Tekton Hub Task
       fileContents.push("import { TektonHubTask } from './tektonHubTasksResolver';");
+      fileContents.push("import { Construct } from 'constructs';");
+      fileContents.push("import { TaskBuilder } from 'cdk8s-pipelines';");
       task.forEach((item: TektonTask) => {
         if (item.kind !== 'Task') {
           return;
@@ -49,7 +51,8 @@ export class TektonHubLink {
         name = this.camelize(name);
         const url = item.latestVersion.rawURL;
         // We want to init an instance of tektonHubTaskResolver
-        let str = `export const ${name} = new TektonHubTask('${url}').build();`;
+        // let str = `export const ${name} = new TektonHubTask('${url}').build();`;
+        let str = `export const ${name} = function(scope: Construct, id: string) : TaskBuilder { return new TektonHubTask(scope, id, '${url}').build(); };`;
         fileContents.push(str);
       });
       return fileContents;
