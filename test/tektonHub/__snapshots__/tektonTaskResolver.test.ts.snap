@@ -34,6 +34,7 @@ TektonHubTask {
     "_params": Map {
       "provider" => ParameterBuilder {
         "_defaultValue": "github",
+        "_description": "provider name of git",
         "_logicalID": "provider",
         "_name": "provider",
         "_requiresPipelineParam": true,
@@ -42,6 +43,7 @@ TektonHubTask {
       },
       "repo" => ParameterBuilder {
         "_defaultValue": "",
+        "_description": "git repository name",
         "_logicalID": "repo",
         "_name": "repo",
         "_requiresPipelineParam": true,
@@ -50,6 +52,7 @@ TektonHubTask {
       },
       "username" => ParameterBuilder {
         "_defaultValue": "",
+        "_description": "username of git provider",
         "_logicalID": "username",
         "_name": "username",
         "_requiresPipelineParam": true,
@@ -58,6 +61,7 @@ TektonHubTask {
       },
       "token" => ParameterBuilder {
         "_defaultValue": "",
+        "_description": "personal access token of git provider",
         "_logicalID": "token",
         "_name": "token",
         "_requiresPipelineParam": true,
@@ -66,6 +70,7 @@ TektonHubTask {
       },
       "pull_request_number" => ParameterBuilder {
         "_defaultValue": "",
+        "_description": "pull request number",
         "_logicalID": "pull_request_number",
         "_name": "pull_request_number",
         "_requiresPipelineParam": true,
@@ -74,6 +79,7 @@ TektonHubTask {
       },
       "gogit-image" => ParameterBuilder {
         "_defaultValue": "ghcr.io/linuxsuren/gogit:v0.0.1@sha256:33e06228b645dd46102c0870c11d420a213cdab84b7a0700dcb6da6ce8b530d6",
+        "_description": "option of gogit image",
         "_logicalID": "gogit-image",
         "_name": "gogit-image",
         "_requiresPipelineParam": true,
@@ -103,7 +109,28 @@ TektonHubTask {
         ],
       },
     },
-    "_steps": [],
+    "_steps": [
+      TaskStepBuilder {
+        "_args": [
+          "--provider",
+          "$(params.provider)",
+          "--repo",
+          "$(params.repo)",
+          "--username",
+          "$(params.username)",
+          "--token",
+          "$(params.token)",
+          "--pr",
+          "$(params.pull_request_number)",
+        ],
+        "_dir": undefined,
+        "_image": "$(params.gogit-image)",
+        "_name": "gogit",
+        "_script": StaticScriptResolver {
+          "_script": undefined,
+        },
+      },
+    ],
     "_workspaces": Map {},
   },
   "url": "loaded git-cli yaml content",
@@ -144,6 +171,7 @@ TektonHubTask {
     "_params": Map {
       "provider" => ParameterBuilder {
         "_defaultValue": "github",
+        "_description": "provider name of git",
         "_logicalID": "provider",
         "_name": "provider",
         "_requiresPipelineParam": true,
@@ -152,6 +180,7 @@ TektonHubTask {
       },
       "repo" => ParameterBuilder {
         "_defaultValue": "",
+        "_description": "git repository name",
         "_logicalID": "repo",
         "_name": "repo",
         "_requiresPipelineParam": true,
@@ -160,6 +189,7 @@ TektonHubTask {
       },
       "username" => ParameterBuilder {
         "_defaultValue": "",
+        "_description": "username of git provider",
         "_logicalID": "username",
         "_name": "username",
         "_requiresPipelineParam": true,
@@ -168,6 +198,7 @@ TektonHubTask {
       },
       "token" => ParameterBuilder {
         "_defaultValue": "",
+        "_description": "personal access token of git provider",
         "_logicalID": "token",
         "_name": "token",
         "_requiresPipelineParam": true,
@@ -176,6 +207,7 @@ TektonHubTask {
       },
       "pull_request_number" => ParameterBuilder {
         "_defaultValue": "",
+        "_description": "pull request number",
         "_logicalID": "pull_request_number",
         "_name": "pull_request_number",
         "_requiresPipelineParam": true,
@@ -184,6 +216,7 @@ TektonHubTask {
       },
       "gogit-image" => ParameterBuilder {
         "_defaultValue": "ghcr.io/linuxsuren/gogit:v0.0.1@sha256:33e06228b645dd46102c0870c11d420a213cdab84b7a0700dcb6da6ce8b530d6",
+        "_description": "option of gogit image",
         "_logicalID": "gogit-image",
         "_name": "gogit-image",
         "_requiresPipelineParam": true,
@@ -213,7 +246,28 @@ TektonHubTask {
         ],
       },
     },
-    "_steps": [],
+    "_steps": [
+      TaskStepBuilder {
+        "_args": [
+          "--provider",
+          "$(params.provider)",
+          "--repo",
+          "$(params.repo)",
+          "--username",
+          "$(params.username)",
+          "--token",
+          "$(params.token)",
+          "--pr",
+          "$(params.pull_request_number)",
+        ],
+        "_dir": undefined,
+        "_image": "$(params.gogit-image)",
+        "_name": "gogit",
+        "_script": StaticScriptResolver {
+          "_script": undefined,
+        },
+      },
+    ],
     "_workspaces": Map {},
   },
   "url": "loaded gogit yaml content",

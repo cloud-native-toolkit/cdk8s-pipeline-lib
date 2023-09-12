@@ -1,3 +1,4 @@
+import { TaskStep } from 'cdk8s-pipelines';
 
 interface Resource {
   id: number;
@@ -30,36 +31,7 @@ export interface TektonTask {
   kind: string;
   hubURLPath: string;
   latestVersion: Version;
-  tags: any[]; 
+  tags: any[];
   platforms: Platform[];
   rating: number;
-}
-
-export interface TektonYaml {
-  apiVersion: string = '';
-  kind: string = '';
-  metadata: {
-    name: string;
-    labels: { };
-    annotations: { };
-  };
-  spec: {
-    description: string;
-    workspaces: Workspace[];
-    params: Params[];
-    results: [ [Object] ];
-    steps: [ [Object] ];
-  };
-}
-
-class Workspace {
-  name = '';
-  optional: boolean | undefined;
-  description = '';
-};
-class Params {
-  name: string = '';
-  description: string = '';
-  type: string = '';
-  default: any;
 }
