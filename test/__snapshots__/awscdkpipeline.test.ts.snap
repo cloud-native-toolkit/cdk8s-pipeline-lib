@@ -30,10 +30,10 @@ exports[`AWSCDKPipelineTest AWSCDKPipeline 1`] = `
       ],
       "tasks": [
         {
-          "name": "fetch-project",
+          "name": "git-clone",
           "params": [],
           "taskRef": {
-            "name": "git-clone",
+            "name": "fetch-project",
           },
           "workspaces": [
             {
@@ -47,7 +47,7 @@ exports[`AWSCDKPipelineTest AWSCDKPipeline 1`] = `
           ],
         },
         {
-          "name": "synth-cdk-pipeline",
+          "name": "aws-cdk-synth",
           "params": [
             {
               "name": "AwsAccountId",
@@ -67,7 +67,7 @@ exports[`AWSCDKPipelineTest AWSCDKPipeline 1`] = `
             },
           ],
           "taskRef": {
-            "name": "aws-cdk-synth",
+            "name": "synth-cdk-pipeline",
           },
           "workspaces": [
             {
