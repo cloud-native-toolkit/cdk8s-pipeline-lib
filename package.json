@@ -1,5 +1,6 @@
 {
   "name": "cdk8s-pipelines-lib",
+  "description": "Library of common Tekton pipeline patterns and Tekton hub tasks as cdk8s constructs.",
   "repository": {
     "type": "git",
     "url": "https://github.com/cloud-native-toolkit/cdk8s-pipelines-lib.git"
@@ -40,7 +41,7 @@
     "@typescript-eslint/eslint-plugin": "^6",
     "@typescript-eslint/parser": "^6",
     "cdk8s": "2.30.0",
-    "cdk8s-pipelines": "0.0.11",
+    "cdk8s-pipelines": "0.0.12",
     "constructs": "10.0.0",
     "eslint": "^8",
     "eslint-import-resolver-node": "^0.3.9",
@@ -62,7 +63,7 @@
   },
   "peerDependencies": {
     "cdk8s": "^2.30.0",
-    "cdk8s-pipelines": "^0.0.11",
+    "cdk8s-pipelines": "^0.0.12",
     "constructs": "^10.0.0"
   },
   "dependencies": {

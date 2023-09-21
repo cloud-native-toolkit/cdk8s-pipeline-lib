@@ -2,6 +2,7 @@ import { cdk8s } from 'projen';
 
 const project = new cdk8s.ConstructLibraryCdk8s({
   name: 'cdk8s-pipelines-lib',
+  description: 'Library of common Tekton pipeline patterns and Tekton hub tasks as cdk8s constructs.',
   repositoryUrl: 'https://github.com/cloud-native-toolkit/cdk8s-pipelines-lib.git',
   defaultReleaseBranch: 'main',
   author: 'Nathan Good',
