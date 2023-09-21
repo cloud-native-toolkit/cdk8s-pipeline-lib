@@ -66,6 +66,9 @@ exports[`AWSCDKPipelineTest AWSCDKPipeline 1`] = `
               "value": "$(params.AwsRegion)",
             },
           ],
+          "runAfter": [
+            "git-clone",
+          ],
           "taskRef": {
             "name": "synth-cdk-pipeline",
           },
