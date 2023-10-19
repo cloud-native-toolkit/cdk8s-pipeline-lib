@@ -4,6 +4,7 @@ exports[`tektonTaskResolver resolverWithWorkspace 1`] = `
 TektonHubTask {
   "_id": "gogit",
   "_params": Map {},
+  "_results": [],
   "_scope": App {
     "node": Node {
       "_children": {},
@@ -87,6 +88,7 @@ TektonHubTask {
         "_value": "$(params.gogit-image)",
       },
     },
+    "_results": [],
     "_scope": App {
       "node": Node {
         "_children": {},
@@ -141,6 +143,7 @@ exports[`tektonTaskResolver resolverWithoutWorkspace 1`] = `
 TektonHubTask {
   "_id": "gogit",
   "_params": Map {},
+  "_results": [],
   "_scope": App {
     "node": Node {
       "_children": {},
@@ -224,6 +227,7 @@ TektonHubTask {
         "_value": "$(params.gogit-image)",
       },
     },
+    "_results": [],
     "_scope": App {
       "node": Node {
         "_children": {},
