@@ -2031,10 +2031,10 @@ case@^1.6.3:
   resolved "https://registry.yarnpkg.com/case/-/case-1.6.3.tgz#0a4386e3e9825351ca2e6216c60467ff5f1ea1c9"
   integrity sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==
 
-cdk8s-pipelines@0.0.15:
-  version "0.0.15"
-  resolved "https://registry.yarnpkg.com/cdk8s-pipelines/-/cdk8s-pipelines-0.0.15.tgz#8d3bf138ddeccbf99e22f09fe1f8af63e1925519"
-  integrity sha512-A/ONGM8nASowXDJ4eXe5+U4X0tI1p60MnJt+fupyuwTZirWwrxKD70PHz8oSI8OJUvvdTZlz5FbmOJ/OB2narQ==
+cdk8s-pipelines@0.0.16:
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/cdk8s-pipelines/-/cdk8s-pipelines-0.0.16.tgz#c32d8153835da0544d2972d8e3ffd85353ac427c"
+  integrity sha512-RzkZsje0rkIllLLXpw2QW4vLz0BsHFoXi1+IY0FxuamoPFe6C6rL4p6LVs81XrURIEKxT8V1JegdICL/d1HBpA==
 
 cdk8s@2.30.0:
   version "2.30.0"
