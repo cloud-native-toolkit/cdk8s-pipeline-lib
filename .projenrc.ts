@@ -24,7 +24,7 @@ const project = new cdk8s.ConstructLibraryCdk8s({
     '@cdk8s/projen-common',
   ],
   keywords: [
-    'cdk8s',
+    'cdk8s-pipelines',
     'kubernetes',
     'pipelines',
     'tekton',
