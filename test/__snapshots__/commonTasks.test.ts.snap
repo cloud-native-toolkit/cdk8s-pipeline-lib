@@ -1,0 +1,191 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ApplyObjectTaskTest ApplyNamespaceObject 1`] = `
+[
+  {
+    "apiVersion": "tekton.dev/v1",
+    "kind": "Pipeline",
+    "metadata": {
+      "name": "test-pipeline",
+    },
+    "spec": {
+      "description": undefined,
+      "params": [
+        {
+          "name": "VERSION",
+          "type": "string",
+        },
+      ],
+      "tasks": [
+        {
+          "name": "create-namespace",
+          "params": [
+            {
+              "name": "SCRIPT",
+              "value": "oc apply -f <<EOF
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: my-test-namespace
+  labels:
+    name: my-test-namespace
+
+EOF",
+            },
+            {
+              "name": "VERSION",
+              "value": "$(params.VERSION)",
+            },
+          ],
+          "taskRef": {
+            "name": "openshift-client",
+          },
+          "workspaces": [
+            {
+              "name": "manifest-dir",
+              "workspace": "manifest-dir",
+            },
+            {
+              "name": "kubeconfig-dir",
+              "workspace": "kubeconfig-dir",
+            },
+          ],
+        },
+        {
+          "name": "register-ibm-operators",
+          "params": [
+            {
+              "name": "SCRIPT",
+              "value": "oc apply -f <<EOF
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: ibm-operator-catalog
+  namespace: openshift-marketplace
+  labels:
+    backup.eventstreams.ibm.com/component: catalogsource
+spec:
+  displayName: IBM Operator Catalog
+  publisher: IBM
+  sourceType: grpc
+  image: icr.io/cpopen/ibm-operator-catalog
+  updateStrategy:
+    registryPoll:
+      interval: 45m
+
+EOF",
+            },
+            {
+              "name": "VERSION",
+              "value": "$(params.VERSION)",
+            },
+          ],
+          "runAfter": [
+            "create-namespace",
+          ],
+          "taskRef": {
+            "name": "openshift-client",
+          },
+          "workspaces": [
+            {
+              "name": "manifest-dir",
+              "workspace": "manifest-dir",
+            },
+            {
+              "name": "kubeconfig-dir",
+              "workspace": "kubeconfig-dir",
+            },
+          ],
+        },
+        {
+          "name": "create-operator-group",
+          "params": [
+            {
+              "name": "SCRIPT",
+              "value": "oc apply -f <<EOF
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: ibm-eventstreams
+  namespace: ibm-eventautomation-operatorgroup
+
+EOF",
+            },
+            {
+              "name": "VERSION",
+              "value": "$(params.VERSION)",
+            },
+          ],
+          "runAfter": [
+            "register-ibm-operators",
+          ],
+          "taskRef": {
+            "name": "openshift-client",
+          },
+          "workspaces": [
+            {
+              "name": "manifest-dir",
+              "workspace": "manifest-dir",
+            },
+            {
+              "name": "kubeconfig-dir",
+              "workspace": "kubeconfig-dir",
+            },
+          ],
+        },
+        {
+          "name": "install-eventstreams",
+          "params": [
+            {
+              "name": "SCRIPT",
+              "value": "oc apply -f <<EOF
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: ibm-eventstreams
+  namespace: ibm-eventstreams
+spec:
+  channel: stable
+  name: ibm-eventstreams
+  source: ibm-operator-catalog
+  sourceNamespace: openshift-marketplace
+
+EOF",
+            },
+            {
+              "name": "VERSION",
+              "value": "$(params.VERSION)",
+            },
+          ],
+          "runAfter": [
+            "create-operator-group",
+          ],
+          "taskRef": {
+            "name": "openshift-client",
+          },
+          "workspaces": [
+            {
+              "name": "manifest-dir",
+              "workspace": "manifest-dir",
+            },
+            {
+              "name": "kubeconfig-dir",
+              "workspace": "kubeconfig-dir",
+            },
+          ],
+        },
+      ],
+      "workspaces": [
+        {
+          "description": "The workspace which contains kubernetes manifests which we want to apply on the cluster.",
+          "name": "manifest-dir",
+        },
+        {
+          "description": "The workspace which contains the the kubeconfig file if in case we want to run the oc command on another cluster.",
+          "name": "kubeconfig-dir",
+        },
+      ],
+    },
+  },
+]
+`;
