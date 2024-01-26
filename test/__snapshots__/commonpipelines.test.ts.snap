@@ -144,7 +144,7 @@ metadata:
   name: ibm-eventstreams
   namespace: ibm-eventstreams
 spec:
-  channel: stable
+  channel: v3.3
   name: ibm-eventstreams
   source: ibm-operator-catalog
   sourceNamespace: openshift-marketplace
@@ -172,6 +172,17 @@ EOF",
               "workspace": "kubeconfig-dir",
             },
           ],
+        },
+        {
+          "name": "test-echo",
+          "params": [],
+          "runAfter": [
+            "subscribe",
+          ],
+          "taskRef": {
+            "name": "echo-message",
+          },
+          "workspaces": [],
         },
       ],
       "workspaces": [

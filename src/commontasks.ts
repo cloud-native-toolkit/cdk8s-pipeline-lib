@@ -1,5 +1,5 @@
 import { Yaml } from 'cdk8s';
-import { ParameterBuilder, TaskBuilder } from 'cdk8s-pipelines';
+import { ParameterBuilder, TaskBuilder, TaskStepBuilder } from 'cdk8s-pipelines';
 import { Construct } from 'constructs';
 import { openshift_client } from './tektonHub/tektonHubTasks';
 
@@ -177,4 +177,24 @@ export function Subscribe(scope: Construct, id: string, ns: string, name: string
     },
   };
   return ApplyObjectTask(scope, id, subscription);
+}
+
+/**
+ * Creates a builder for a pipeline task that uses an busybox image to echo out the
+ * given message.
+ *
+ * @param scope The parent [Construct](https://cdk8s.io/docs/latest/basics/constructs/).
+ * @param id The `id` of the construct. Must be unique for each one in a chart.
+ * @param message The message for the task to echo to the output.
+ * @constructor
+ */
+export function EchoMessage(scope: Construct, id: string, message: string): TaskBuilder {
+  // TODO: sanitize input for the message to make sure it has no injection attacks
+  return new TaskBuilder(scope, id)
+    .withName('echo-message')
+    .withDescription('Echos a message out to the pipeline')
+    .withStep(new TaskStepBuilder()
+      .withName('echo-message')
+      .withImage('docker.io/library/busybox:latest')
+      .withCommand(['echo', `\"${message}\"`]));
 }
