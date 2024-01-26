@@ -67,7 +67,7 @@ export function CreateNamespace(scope: Construct, id: string, name: string): Tas
  *
  * @param scope The parent [Construct](https://cdk8s.io/docs/latest/basics/constructs/).
  * @param id The `id` of the construct. Must be unique for each one in a chart.
- * @param labels
+ * @param labels The labels to give the CatalogSource.
  * @param refreshIntervalMin The amount of time, in minutes, between catalog refreshes.
  * @constructor
  */
@@ -109,9 +109,9 @@ export function RegisterIBMOperatorCatalog(scope: Construct, id: string, labels:
  *
  * @param scope The parent [Construct](https://cdk8s.io/docs/latest/basics/constructs/).
  * @param id The `id` of the construct. Must be unique for each one in a chart.
- * @param ns
- * @param name
- * @param targetNs
+ * @param ns The namespace for the OperatorGroup.
+ * @param name The name of the OperatorGroup.
+ * @param targetNs If provided, it is the target namespace for the OperatorGroup.
  * @constructor
  */
 export function CreateOperatorGroup(scope: Construct, id: string, ns: string, name: string, targetNs: string = ''): TaskBuilder {
@@ -155,10 +155,10 @@ export function CreateOperatorGroup(scope: Construct, id: string, ns: string, na
  *
  * @param scope The parent [Construct](https://cdk8s.io/docs/latest/basics/constructs/).
  * @param id The `id` of the construct. Must be unique for each one in a chart.
- * @param ns
- * @param name
- * @param catalogSource
- * @param channel
+ * @param ns The namespace for the Subscription.
+ * @param name The name of the Subscription.
+ * @param catalogSource The name of the catalog source. If using IBM operators, that is `ibm-operator-catalog`
+ * @param channel The name of the channel. It defaults to `stable`, but it could be something like `v3.3`.
  * @constructor
  */
 export function Subscribe(scope: Construct, id: string, ns: string, name: string, catalogSource: string, channel: string = 'stable'): TaskBuilder {
