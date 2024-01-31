@@ -20,6 +20,11 @@ TektonHubTask {
     "outdir": "dist",
     "outputFileExtension": ".k8s.yaml",
     "recordConstructMetadata": false,
+    "resolvers": [
+      LazyResolver {},
+      ImplicitTokenResolver {},
+      NumberStringUnionResolver {},
+    ],
     "yamlOutputType": 1,
     Symbol(@aws-cdk/core.DependableTrait): {
       "dependencyRoots": [
@@ -104,6 +109,11 @@ TektonHubTask {
       "outdir": "dist",
       "outputFileExtension": ".k8s.yaml",
       "recordConstructMetadata": false,
+      "resolvers": [
+        LazyResolver {},
+        ImplicitTokenResolver {},
+        NumberStringUnionResolver {},
+      ],
       "yamlOutputType": 1,
       Symbol(@aws-cdk/core.DependableTrait): {
         "dependencyRoots": [
@@ -159,6 +169,11 @@ TektonHubTask {
     "outdir": "dist",
     "outputFileExtension": ".k8s.yaml",
     "recordConstructMetadata": false,
+    "resolvers": [
+      LazyResolver {},
+      ImplicitTokenResolver {},
+      NumberStringUnionResolver {},
+    ],
     "yamlOutputType": 1,
     Symbol(@aws-cdk/core.DependableTrait): {
       "dependencyRoots": [
@@ -243,6 +258,11 @@ TektonHubTask {
       "outdir": "dist",
       "outputFileExtension": ".k8s.yaml",
       "recordConstructMetadata": false,
+      "resolvers": [
+        LazyResolver {},
+        ImplicitTokenResolver {},
+        NumberStringUnionResolver {},
+      ],
       "yamlOutputType": 1,
       Symbol(@aws-cdk/core.DependableTrait): {
         "dependencyRoots": [

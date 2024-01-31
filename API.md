@@ -306,6 +306,7 @@ a construct node.
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#cdk8s-pipelines-lib.AWSCDKPipelineChart.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#cdk8s-pipelines-lib.AWSCDKPipelineChart.property.apiObjects">apiObjects</a></code> | <code>cdk8s.ApiObject[]</code> | Returns all the included API objects. |
 | <code><a href="#cdk8s-pipelines-lib.AWSCDKPipelineChart.property.labels">labels</a></code> | <code>{[ key: string ]: string}</code> | Labels applied to all resources in this chart. |
 | <code><a href="#cdk8s-pipelines-lib.AWSCDKPipelineChart.property.namespace">namespace</a></code> | <code>string</code> | The default namespace for all objects in this chart. |
 
@@ -320,6 +321,18 @@ public readonly node: Node;
 - *Type:* constructs.Node
 
 The tree node.
+
+---
+
+##### `apiObjects`<sup>Required</sup> <a name="apiObjects" id="cdk8s-pipelines-lib.AWSCDKPipelineChart.property.apiObjects"></a>
+
+```typescript
+public readonly apiObjects: ApiObject[];
+```
+
+- *Type:* cdk8s.ApiObject[]
+
+Returns all the included API objects.
 
 ---
 
@@ -576,6 +589,203 @@ Generates the AWS CDK Pipeline (AWSCDKPipelineChart) based on the actual project
 
 ---
 
+
+
+### InstallFromIBMOperatorPipeline <a name="InstallFromIBMOperatorPipeline" id="cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline"></a>
+
+A basic pipeline that starts with a subscription to the IBM operator catalog.
+
+The following steps are included in this pipeline, so you do not need to add
+them. The pipeline:
+
+1. Creates the specified namespace.
+1. Registers the IBM operator.
+1. Creates an OperatorGroup.
+1. Subscribes to the given `name` and `channel`
+
+#### Initializers <a name="Initializers" id="cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.Initializer"></a>
+
+```typescript
+import { InstallFromIBMOperatorPipeline } from 'cdk8s-pipelines-lib'
+
+new InstallFromIBMOperatorPipeline(scope: Construct, id: string, ns: string, subscription: string, channel: string)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | The parent [Construct](https://cdk8s.io/docs/latest/basics/constructs/). |
+| <code><a href="#cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.Initializer.parameter.id">id</a></code> | <code>string</code> | The `id` of the construct. |
+| <code><a href="#cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.Initializer.parameter.ns">ns</a></code> | <code>string</code> | The namespace to create and to use for subscribing to the product and channel. |
+| <code><a href="#cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.Initializer.parameter.subscription">subscription</a></code> | <code>string</code> | The name of the subscription. |
+| <code><a href="#cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.Initializer.parameter.channel">channel</a></code> | <code>string</code> | The name of the channel (e.g., `v3.3`, `stable`). |
+
+---
+
+##### `scope`<sup>Required</sup> <a name="scope" id="cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.Initializer.parameter.scope"></a>
+
+- *Type:* constructs.Construct
+
+The parent [Construct](https://cdk8s.io/docs/latest/basics/constructs/).
+
+---
+
+##### `id`<sup>Required</sup> <a name="id" id="cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.Initializer.parameter.id"></a>
+
+- *Type:* string
+
+The `id` of the construct.
+
+Must be unique for each one in a chart.
+
+---
+
+##### `ns`<sup>Required</sup> <a name="ns" id="cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.Initializer.parameter.ns"></a>
+
+- *Type:* string
+
+The namespace to create and to use for subscribing to the product and channel.
+
+---
+
+##### `subscription`<sup>Required</sup> <a name="subscription" id="cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.Initializer.parameter.subscription"></a>
+
+- *Type:* string
+
+The name of the subscription.
+
+For example, for IBM Event Streams is it `ibm-eventstreams`. For Red Hat Serverless, it is `serverless-operator`.
+
+---
+
+##### `channel`<sup>Required</sup> <a name="channel" id="cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.Initializer.parameter.channel"></a>
+
+- *Type:* string
+
+The name of the channel (e.g., `v3.3`, `stable`).
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.buildPipeline">buildPipeline</a></code> | Builds the actual [Pipeline](https://tekton.dev/docs/getting-started/pipelines/) from the settings configured using the fluid syntax. |
+| <code><a href="#cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.withDescription">withDescription</a></code> | Provides the name for the pipeline task and will be rendered as the `name` property. |
+| <code><a href="#cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.withName">withName</a></code> | Provides the name for the pipeline task and will be rendered as the `name` property. |
+| <code><a href="#cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.withTask">withTask</a></code> | *No description.* |
+
+---
+
+##### `buildPipeline` <a name="buildPipeline" id="cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.buildPipeline"></a>
+
+```typescript
+public buildPipeline(opts?: BuilderOptions): void
+```
+
+Builds the actual [Pipeline](https://tekton.dev/docs/getting-started/pipelines/) from the settings configured using the fluid syntax.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.buildPipeline.parameter.opts"></a>
+
+- *Type:* cdk8s-pipelines.BuilderOptions
+
+---
+
+##### `withDescription` <a name="withDescription" id="cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.withDescription"></a>
+
+```typescript
+public withDescription(description: string): PipelineBuilder
+```
+
+Provides the name for the pipeline task and will be rendered as the `name` property.
+
+###### `description`<sup>Required</sup> <a name="description" id="cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.withDescription.parameter.description"></a>
+
+- *Type:* string
+
+---
+
+##### `withName` <a name="withName" id="cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.withName"></a>
+
+```typescript
+public withName(name: string): PipelineBuilder
+```
+
+Provides the name for the pipeline task and will be rendered as the `name` property.
+
+###### `name`<sup>Required</sup> <a name="name" id="cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.withName.parameter.name"></a>
+
+- *Type:* string
+
+---
+
+##### `withTask` <a name="withTask" id="cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.withTask"></a>
+
+```typescript
+public withTask(taskB: TaskBuilder): PipelineBuilder
+```
+
+###### `taskB`<sup>Required</sup> <a name="taskB" id="cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.withTask.parameter.taskB"></a>
+
+- *Type:* cdk8s-pipelines.TaskBuilder
+
+---
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.property.name">name</a></code> | <code>string</code> | Gets the name of the pipeline. |
+| <code><a href="#cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.property.params">params</a></code> | <code>cdk8s-pipelines.PipelineParam[]</code> | Returns the array of `PipelineParam` objects that represent the parameters configured for the `Pipeline`. |
+| <code><a href="#cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.property.workspaces">workspaces</a></code> | <code>cdk8s-pipelines.PipelineWorkspace[]</code> | Returns the array of `PipelineWorkspace` objects that represent the workspaces configured for the `Pipeline`. |
+
+---
+
+##### `name`<sup>Required</sup> <a name="name" id="cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.property.name"></a>
+
+```typescript
+public readonly name: string;
+```
+
+- *Type:* string
+
+Gets the name of the pipeline.
+
+---
+
+##### `params`<sup>Required</sup> <a name="params" id="cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.property.params"></a>
+
+```typescript
+public readonly params: PipelineParam[];
+```
+
+- *Type:* cdk8s-pipelines.PipelineParam[]
+
+Returns the array of `PipelineParam` objects that represent the parameters configured for the `Pipeline`.
+
+Note this is an "expensive" get because it loops through the tasks in the
+pipeline and checks for duplicates in the pipeline parameters for each task
+parameter found. You should avoid calling this in a loop--instead, declare
+a local variable before the loop and reference that instead.
+
+---
+
+##### `workspaces`<sup>Required</sup> <a name="workspaces" id="cdk8s-pipelines-lib.InstallFromIBMOperatorPipeline.property.workspaces"></a>
+
+```typescript
+public readonly workspaces: PipelineWorkspace[];
+```
+
+- *Type:* cdk8s-pipelines.PipelineWorkspace[]
+
+Returns the array of `PipelineWorkspace` objects that represent the workspaces configured for the `Pipeline`.
+
+This is an "expensive" get because it loops through the workspaces in the
+pipeline and checks for duplicates in the pipeline workspaces for each task
+workspace found. You should avoid calling this in a loop--instead, declare
+a local variable before the loop and reference that instead.
+
+---
 
 
 
