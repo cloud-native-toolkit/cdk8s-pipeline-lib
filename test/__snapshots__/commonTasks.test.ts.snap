@@ -22,7 +22,7 @@ exports[`ApplyObjectTaskTest ApplyNamespaceObject 1`] = `
           "params": [
             {
               "name": "SCRIPT",
-              "value": "oc apply -f <<EOF
+              "value": "cat <<EOF | oc apply -f -
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -30,7 +30,8 @@ metadata:
   labels:
     name: my-test-namespace
 
-EOF",
+EOF
+",
             },
             {
               "name": "VERSION",
@@ -56,7 +57,7 @@ EOF",
           "params": [
             {
               "name": "SCRIPT",
-              "value": "oc apply -f <<EOF
+              "value": "cat <<EOF | oc apply -f -
 apiVersion: operators.coreos.com/v1alpha1
 kind: CatalogSource
 metadata:
@@ -73,7 +74,8 @@ spec:
     registryPoll:
       interval: 45m
 
-EOF",
+EOF
+",
             },
             {
               "name": "VERSION",
@@ -102,14 +104,15 @@ EOF",
           "params": [
             {
               "name": "SCRIPT",
-              "value": "oc apply -f <<EOF
+              "value": "cat <<EOF | oc apply -f -
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
   name: ibm-eventstreams
   namespace: ibm-eventautomation-operatorgroup
 
-EOF",
+EOF
+",
             },
             {
               "name": "VERSION",
@@ -138,7 +141,7 @@ EOF",
           "params": [
             {
               "name": "SCRIPT",
-              "value": "oc apply -f <<EOF
+              "value": "cat <<EOF | oc apply -f -
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
@@ -150,7 +153,8 @@ spec:
   source: ibm-operator-catalog
   sourceNamespace: openshift-marketplace
 
-EOF",
+EOF
+",
             },
             {
               "name": "VERSION",
