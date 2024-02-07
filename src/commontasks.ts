@@ -16,7 +16,7 @@ export const DefaultCatalogSourceNamespace: string = 'openshift-marketplace';
  */
 export function ApplyObjectTask(scope: Construct, id: string, input: any): TaskBuilder {
   return openshift_client(scope, id).withStringParam(new ParameterBuilder('SCRIPT').withValue(
-    ['oc apply -f <<EOF', Yaml.stringify(input), 'EOF'].join('\n')),
+    ['cat <<EOF | oc apply -f -', Yaml.stringify(input), 'EOF', ''].join('\n')),
   );
 }
 
