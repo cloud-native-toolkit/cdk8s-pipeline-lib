@@ -206,7 +206,7 @@ function initializeTemplate(templateFile: string) {
 
 function writeFileHeader(outputFile: string): boolean {
   const fileImports: string[] = [];
-  fileImports.push('/* eslint-disable */');
+  // fileImports.push('/* eslint-disable */');
   fileImports.push('/* this file is generated during the npx projen build process */');
   fileImports.push('import { ParameterBuilder, TaskBuilder, TaskStepBuilder, WorkspaceBuilder } from \'cdk8s-pipelines\';');
   fileImports.push('import { Construct } from \'constructs\';');
