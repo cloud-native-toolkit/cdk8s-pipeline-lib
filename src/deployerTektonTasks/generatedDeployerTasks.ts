@@ -125,25 +125,52 @@ $(params.SCRIPT)
     this.delegate.buildTask();
   }
 }
-export class IbmPak01 extends TaskBuilder {
+export class ApplyOlmSubscription02 extends TaskBuilder {
   delegate: TaskBuilder;
   public constructor(scope: Construct, id: string) {
     super(scope, id);
     this.delegate = new TaskBuilder(scope, id);
-    this.delegate.withName('ibm-pak');
+    this.delegate.withName('apply-olm-subscription-v0.2');
     this.delegate.withWorkspace(new WorkspaceBuilder('manifest-dir')
       .withName('manifest-dir')
       .withDescription(`The workspace which contains kubernetes manifests which we want to apply on the cluster.`));
     this.delegate.withWorkspace(new WorkspaceBuilder('kubeconfig-dir')
       .withName('kubeconfig-dir')
       .withDescription(`The workspace which contains the the kubeconfig file if in case we want to run the oc command on another cluster.`));
+    this.delegate.withStringParam(new ParameterBuilder('SUBSCRIPTION')
+      .withDescription(`OLM Subscription YAML`)
+      .withDefaultValue(`apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: subscription-name
+  namespace: openshift-operators
+spec:
+  channel: channel
+  name: subscription-name
+  source: catalog-source-name
+  sourceNamespace: openshift-marketplace
+`)
+      .withPiplineParameter('SUBSCRIPTION', `apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: subscription-name
+  namespace: openshift-operators
+spec:
+  channel: channel
+  name: subscription-name
+  source: catalog-source-name
+  sourceNamespace: openshift-marketplace
+`));
     this.delegate.withStringParam(new ParameterBuilder('SCRIPT')
-      .withDescription(`The OpenShift CLI arguments to run`)
-      .withDefaultValue(`oc ibm-pak help`)
-      .withPiplineParameter('SCRIPT', `oc ibm-pak help`));
+      .withDescription(`Optional extra scripts`)
+      .withDefaultValue(``)
+      .withPiplineParameter('SCRIPT', ``));
     this.delegate.withStep(new TaskStepBuilder()
       .withName('oc')
       .fromScriptData(`#!/usr/bin/env bash
+
+mkdir ~/tmp
+cd ~/tmp
 
 [[ "$(workspaces.manifest-dir.bound)" == "true" ]] && \
 cd $(workspaces.manifest-dir.path)
@@ -151,6 +178,68 @@ cd $(workspaces.manifest-dir.path)
 [[ "$(workspaces.kubeconfig-dir.bound)" == "true" ]] && \
 [[ -f $(workspaces.kubeconfig-dir.path)/kubeconfig ]] && \
 export KUBECONFIG=$(workspaces.kubeconfig-dir.path)/kubeconfig
+
+function get_csv
+{
+  name=$1
+  namespace=$2
+  csv=$(oc get subscriptions.operators.coreos.com $name -n $namespace -o yaml | yq '.status.currentCSV')
+  echo $csv
+}
+shopt -s expand_aliases
+
+echo "===== Applying the following subscription ====="
+printf '%s' "$(params.SUBSCRIPTION)" > "./subscription.yaml"
+chmod 0755 ./subscription.yaml
+cat ./subscription.yaml
+
+subscription_name=$(cat subscription.yaml | yq '.metadata.name')
+subscription_namespace=$(cat subscription.yaml | yq '.metadata.namespace')
+echo "Subscription name: $subscription_name"
+echo "Subscription namespace: $subscription_namespace"
+
+echo "===== Removing $subscription_name in $subscription_namespace if exists ====="
+echo "Checking for existing ClusterServiceVersion"
+csv=$(get_csv $subscription_name $subscription_namespace)
+echo "CSV: $csv"
+
+if [ $csv == "null" ]; then
+  echo "ClusterServiceVersion not found. Maybe the subscription is being created. Deleting that subscription."
+  oc -n $subscription_namespace delete subscriptions.operators.coreos.com $subscription_name --ignore-not-found=true
+else
+  echo "Deleting clusterserviceversion and subscription..."
+  oc -n $subscription_namespace delete clusterserviceversions.operators.coreos.com $csv --ignore-not-found=true
+  oc -n $subscription_namespace delete subscriptions.operators.coreos.com $subscription_name --ignore-not-found=true
+fi
+
+echo "===== Installing $subscription_name in $subscription_namespace ====="
+oc apply -f subscription.yaml
+while true
+do
+  echo "Waiting for a cluster service version (CSV) for $subscription_name to be created... (wait 10s inbetween checks)"
+  csv=$(get_csv $subscription_name $subscription_namespace)
+  echo "CSV: $csv"
+  if [ $csv != "null" ]; then
+    break
+  fi
+  sleep 10
+done
+
+csv=$(get_csv $subscription_name $subscription_namespace)
+while true
+do
+  csv_phase=$(oc get -n $subscription_namespace clusterserviceversions.operators.coreos.com $csv -o yaml | yq '.status.phase')
+  if [[ $csv_phase == "Failed" ]]; then
+    echo "CSV failed. Subscription failed to be installed."
+    exit 1
+  elif [[ $csv_phase == "Succeeded" ]]; then
+    echo "CSV installed. Subscription installed."
+    break
+  else
+    echo "Waiting for csv $csv to be Successful. Current phase: $csv_phase... (wait 10s inbetween checks)"
+  fi
+  sleep 10
+done
 
 $(params.SCRIPT)
 `)
@@ -162,24 +251,28 @@ $(params.SCRIPT)
     this.delegate.buildTask();
   }
 }
-export class IbmPak02 extends TaskBuilder {
+export class IbmLakehouseManage01 extends TaskBuilder {
   delegate: TaskBuilder;
   public constructor(scope: Construct, id: string) {
     super(scope, id);
     this.delegate = new TaskBuilder(scope, id);
-    this.delegate.withName('ibm-pak-0.2');
+    this.delegate.withName('ibm-lakehouse-manage');
     this.delegate.withWorkspace(new WorkspaceBuilder('manifest-dir')
       .withName('manifest-dir')
       .withDescription(`The workspace which contains kubernetes manifests which we want to apply on the cluster.`));
     this.delegate.withWorkspace(new WorkspaceBuilder('kubeconfig-dir')
       .withName('kubeconfig-dir')
       .withDescription(`The workspace which contains the the kubeconfig file if in case we want to run the oc command on another cluster.`));
+    this.delegate.withStringParam(new ParameterBuilder('IMAGE_TAG')
+      .withDescription(`Latest GA build tag for ibm-lakehouse-manage-utils`)
+      .withDefaultValue(`v1.0.3`)
+      .withPiplineParameter('IMAGE_TAG', `v1.0.3`));
     this.delegate.withStringParam(new ParameterBuilder('SCRIPT')
-      .withDescription(`The OpenShift CLI arguments to run`)
-      .withDefaultValue(`oc ibm-pak help`)
-      .withPiplineParameter('SCRIPT', `oc ibm-pak help`));
+      .withDescription(`Script to run`)
+      .withDefaultValue(`oc help`)
+      .withPiplineParameter('SCRIPT', `oc help`));
     this.delegate.withStep(new TaskStepBuilder()
-      .withName('oc')
+      .withName('ibm-lakehouse-manage')
       .fromScriptData(`#!/usr/bin/env bash
 
 [[ "$(workspaces.manifest-dir.bound)" == "true" ]] && \
@@ -187,12 +280,16 @@ cd $(workspaces.manifest-dir.path)
 
 [[ "$(workspaces.kubeconfig-dir.bound)" == "true" ]] && \
 [[ -f $(workspaces.kubeconfig-dir.path)/kubeconfig ]] && \
-export KUBECONFIG=$(workspaces.kubeconfig-dir.path)/kubeconfig
+export KUBECONFIG=$(workspaces.kubeconfig-dir.path)/kubeconfig && \
+cp $(workspaces.kubeconfig-dir.path)/kubeconfig /opt/ansible/.kubeconfig
+
+unset KUBECONFIG
 
 $(params.SCRIPT)
 `)
       .withWorkingDir('')
-      .withImage('quay.io/ibmtz/ibm-pak-ubi:latest'));
+      .withArgs(['/usr/local/bin/entrypoint'])
+      .withImage('cp.icr.io/cpopen/watsonx-data/ibm-lakehouse-manage-utils:$(params.IMAGE_TAG)'));
   }
 
   public buildTask(): void {
@@ -310,6 +407,174 @@ while true; do
   # Add a delay (e.g., 5 seconds) before the next iteration (optional, adjust as needed)
   sleep 5
 done
+`)
+      .withWorkingDir('')
+      .withImage('quay.io/congxdev/ibm-pak-ubi:latest'));
+  }
+
+  public buildTask(): void {
+    this.delegate.buildTask();
+  }
+}
+export class IbmPak02 extends TaskBuilder {
+  delegate: TaskBuilder;
+  public constructor(scope: Construct, id: string) {
+    super(scope, id);
+    this.delegate = new TaskBuilder(scope, id);
+    this.delegate.withName('ibm-pak-0.2');
+    this.delegate.withWorkspace(new WorkspaceBuilder('manifest-dir')
+      .withName('manifest-dir')
+      .withDescription(`The workspace which contains kubernetes manifests which we want to apply on the cluster.`));
+    this.delegate.withWorkspace(new WorkspaceBuilder('kubeconfig-dir')
+      .withName('kubeconfig-dir')
+      .withDescription(`The workspace which contains the the kubeconfig file if in case we want to run the oc command on another cluster.`));
+    this.delegate.withStringParam(new ParameterBuilder('SCRIPT')
+      .withDescription(`The OpenShift CLI arguments to run`)
+      .withDefaultValue(`oc ibm-pak help`)
+      .withPiplineParameter('SCRIPT', `oc ibm-pak help`));
+    this.delegate.withStep(new TaskStepBuilder()
+      .withName('oc')
+      .fromScriptData(`#!/usr/bin/env bash
+
+[[ "$(workspaces.manifest-dir.bound)" == "true" ]] && \
+cd $(workspaces.manifest-dir.path)
+
+[[ "$(workspaces.kubeconfig-dir.bound)" == "true" ]] && \
+[[ -f $(workspaces.kubeconfig-dir.path)/kubeconfig ]] && \
+export KUBECONFIG=$(workspaces.kubeconfig-dir.path)/kubeconfig
+
+$(params.SCRIPT)
+`)
+      .withWorkingDir('')
+      .withImage('quay.io/ibmtz/ibm-pak-ubi:latest'));
+  }
+
+  public buildTask(): void {
+    this.delegate.buildTask();
+  }
+}
+export class IbmPak01 extends TaskBuilder {
+  delegate: TaskBuilder;
+  public constructor(scope: Construct, id: string) {
+    super(scope, id);
+    this.delegate = new TaskBuilder(scope, id);
+    this.delegate.withName('ibm-pak');
+    this.delegate.withWorkspace(new WorkspaceBuilder('manifest-dir')
+      .withName('manifest-dir')
+      .withDescription(`The workspace which contains kubernetes manifests which we want to apply on the cluster.`));
+    this.delegate.withWorkspace(new WorkspaceBuilder('kubeconfig-dir')
+      .withName('kubeconfig-dir')
+      .withDescription(`The workspace which contains the the kubeconfig file if in case we want to run the oc command on another cluster.`));
+    this.delegate.withStringParam(new ParameterBuilder('SCRIPT')
+      .withDescription(`The OpenShift CLI arguments to run`)
+      .withDefaultValue(`oc ibm-pak help`)
+      .withPiplineParameter('SCRIPT', `oc ibm-pak help`));
+    this.delegate.withStep(new TaskStepBuilder()
+      .withName('oc')
+      .fromScriptData(`#!/usr/bin/env bash
+
+[[ "$(workspaces.manifest-dir.bound)" == "true" ]] && \
+cd $(workspaces.manifest-dir.path)
+
+[[ "$(workspaces.kubeconfig-dir.bound)" == "true" ]] && \
+[[ -f $(workspaces.kubeconfig-dir.path)/kubeconfig ]] && \
+export KUBECONFIG=$(workspaces.kubeconfig-dir.path)/kubeconfig
+
+$(params.SCRIPT)
+`)
+      .withWorkingDir('')
+      .withImage('quay.io/congxdev/ibm-pak-ubi:latest'));
+  }
+
+  public buildTask(): void {
+    this.delegate.buildTask();
+  }
+}
+export class IbmPakApplyCatalogSource01 extends TaskBuilder {
+  delegate: TaskBuilder;
+  public constructor(scope: Construct, id: string) {
+    super(scope, id);
+    this.delegate = new TaskBuilder(scope, id);
+    this.delegate.withName('ibm-pak-apply-catalog-source');
+    this.delegate.withWorkspace(new WorkspaceBuilder('manifest-dir')
+      .withName('manifest-dir')
+      .withDescription(`The workspace which contains kubernetes manifests which we want to apply on the cluster.`));
+    this.delegate.withWorkspace(new WorkspaceBuilder('kubeconfig-dir')
+      .withName('kubeconfig-dir')
+      .withDescription(`The workspace which contains the the kubeconfig file if in case we want to run the oc command on another cluster.`));
+    this.delegate.withStringParam(new ParameterBuilder('SCRIPT')
+      .withDescription(`Optional extra scripts`)
+      .withDefaultValue(`oc ibm-pak help`)
+      .withPiplineParameter('SCRIPT', `oc ibm-pak help`));
+    this.delegate.withStringParam(new ParameterBuilder('CASE_NAME')
+      .withDescription(`IBM CASE name, from https://github.com/IBM/cloud-pak/tree/master/repo/case`)
+      .withDefaultValue(``)
+      .withPiplineParameter('CASE_NAME', ``));
+    this.delegate.withStringParam(new ParameterBuilder('CASE_VERSION')
+      .withDescription(`IBM CASE version, from https://github.com/IBM/cloud-pak/tree/master/repo/case`)
+      .withDefaultValue(``)
+      .withPiplineParameter('CASE_VERSION', ``));
+    this.delegate.withStringParam(new ParameterBuilder('ARCHITECTURE')
+      .withDescription(`Optional, specific architecture for intended operator (amd64, ppc64le, s390x). This may not be required if the product supports all architectures. Check with the relevant product documentation.`)
+      .withDefaultValue(``)
+      .withPiplineParameter('ARCHITECTURE', ``));
+    this.delegate.withStep(new TaskStepBuilder()
+      .withName('oc')
+      .fromScriptData(`#!/usr/bin/env bash
+
+mkdir ~/tmp-catalogsources
+cd ~/tmp-catalogsources
+
+[[ "$(workspaces.manifest-dir.bound)" == "true" ]] && \
+cd $(workspaces.manifest-dir.path)
+
+[[ "$(workspaces.kubeconfig-dir.bound)" == "true" ]] && \
+[[ -f $(workspaces.kubeconfig-dir.path)/kubeconfig ]] && \
+export KUBECONFIG=$(workspaces.kubeconfig-dir.path)/kubeconfig
+
+oc ibm-pak get \${CASE_NAME} --version \${CASE_VERSION}
+
+oc ibm-pak generate mirror-manifests \${CASE_NAME} icr.io --version \${CASE_VERSION}
+
+echo "===== Available catalog sources ====="
+ls -A1 ~/.ibm-pak/data/mirror/\${CASE_NAME}/\${CASE_VERSION} | grep catalog-sources > catalog-sources-files.txt
+cat catalog-sources-files.txt
+
+# if a specific catalog source for the architecture exists, apply that
+if [ ! -z "$ARCHITECTURE" ]
+then
+  echo "Finding specific catalog source for the chosen architecture ($ARCHITECTURE)"
+  if ! cat ~/.ibm-pak/data/mirror/\${CASE_NAME}/\${CASE_VERSION}/catalog-sources-linux-\${ARCH}.yaml; then
+    echo "Unable to find catalog source for specific architecture"
+    exit 1
+  else
+    cat ~/.ibm-pak/data/mirror/\${CASE_NAME}/\${CASE_VERSION}/catalog-sources.yaml | yq '.metadata.name' | awk '!/---/' > catalog_sources_names.txt
+    oc apply -f ~/.ibm-pak/data/mirror/\${CASE_NAME}/\${CASE_VERSION}/catalog-sources-linux-\${ARCH}.yaml
+  fi
+else
+  echo "No architecture chosen. Applying all available catalog sources"
+  cat ~/.ibm-pak/data/mirror/\${CASE_NAME}/\${CASE_VERSION}/catalog-sources* | yq '.metadata.name' | awk '!/---/' > catalog_sources_names.txt
+  file_names=\`cat catalog-sources-files.txt\`
+  for file_name in $file_names; do
+    oc apply -f ~/.ibm-pak/data/mirror/\${CASE_NAME}/\${CASE_VERSION}/$file_name
+  done
+fi
+
+names=\`cat catalog_sources_names.txt\`
+echo "===== Catalog sources applied to cluster ====="
+echo $names
+
+echo "===== Waiting for catalog sources to be READY ====="
+for name in $names; do
+  echo "Waiting for $name to be READY"
+  until [[ $(oc get CatalogSource $name -n openshift-marketplace -o json | jq '.status.connectionState.lastObservedState') == "\"READY\"" ]]
+  do
+    sleep 2
+  done
+  echo "CatalogSource $name is READY"
+done
+
+$(params.SCRIPT)
 `)
       .withWorkingDir('')
       .withImage('quay.io/congxdev/ibm-pak-ubi:latest'));
@@ -501,271 +766,6 @@ $(params.SCRIPT)
 `)
       .withWorkingDir('')
       .withImage('quay.io/openshift/origin-cli:$(params.VERSION)'));
-  }
-
-  public buildTask(): void {
-    this.delegate.buildTask();
-  }
-}
-export class IbmPakApplyCatalogSource01 extends TaskBuilder {
-  delegate: TaskBuilder;
-  public constructor(scope: Construct, id: string) {
-    super(scope, id);
-    this.delegate = new TaskBuilder(scope, id);
-    this.delegate.withName('ibm-pak-apply-catalog-source');
-    this.delegate.withWorkspace(new WorkspaceBuilder('manifest-dir')
-      .withName('manifest-dir')
-      .withDescription(`The workspace which contains kubernetes manifests which we want to apply on the cluster.`));
-    this.delegate.withWorkspace(new WorkspaceBuilder('kubeconfig-dir')
-      .withName('kubeconfig-dir')
-      .withDescription(`The workspace which contains the the kubeconfig file if in case we want to run the oc command on another cluster.`));
-    this.delegate.withStringParam(new ParameterBuilder('SCRIPT')
-      .withDescription(`Optional extra scripts`)
-      .withDefaultValue(`oc ibm-pak help`)
-      .withPiplineParameter('SCRIPT', `oc ibm-pak help`));
-    this.delegate.withStringParam(new ParameterBuilder('CASE_NAME')
-      .withDescription(`IBM CASE name, from https://github.com/IBM/cloud-pak/tree/master/repo/case`)
-      .withDefaultValue(``)
-      .withPiplineParameter('CASE_NAME', ``));
-    this.delegate.withStringParam(new ParameterBuilder('CASE_VERSION')
-      .withDescription(`IBM CASE version, from https://github.com/IBM/cloud-pak/tree/master/repo/case`)
-      .withDefaultValue(``)
-      .withPiplineParameter('CASE_VERSION', ``));
-    this.delegate.withStringParam(new ParameterBuilder('ARCHITECTURE')
-      .withDescription(`Optional, specific architecture for intended operator (amd64, ppc64le, s390x). This may not be required if the product supports all architectures. Check with the relevant product documentation.`)
-      .withDefaultValue(``)
-      .withPiplineParameter('ARCHITECTURE', ``));
-    this.delegate.withStep(new TaskStepBuilder()
-      .withName('oc')
-      .fromScriptData(`#!/usr/bin/env bash
-
-mkdir ~/tmp-catalogsources
-cd ~/tmp-catalogsources
-
-[[ "$(workspaces.manifest-dir.bound)" == "true" ]] && \
-cd $(workspaces.manifest-dir.path)
-
-[[ "$(workspaces.kubeconfig-dir.bound)" == "true" ]] && \
-[[ -f $(workspaces.kubeconfig-dir.path)/kubeconfig ]] && \
-export KUBECONFIG=$(workspaces.kubeconfig-dir.path)/kubeconfig
-
-oc ibm-pak get \${CASE_NAME} --version \${CASE_VERSION}
-
-oc ibm-pak generate mirror-manifests \${CASE_NAME} icr.io --version \${CASE_VERSION}
-
-echo "===== Available catalog sources ====="
-ls -A1 ~/.ibm-pak/data/mirror/\${CASE_NAME}/\${CASE_VERSION} | grep catalog-sources > catalog-sources-files.txt
-cat catalog-sources-files.txt
-
-# if a specific catalog source for the architecture exists, apply that
-if [ ! -z "$ARCHITECTURE" ]
-then
-  echo "Finding specific catalog source for the chosen architecture ($ARCHITECTURE)"
-  if ! cat ~/.ibm-pak/data/mirror/\${CASE_NAME}/\${CASE_VERSION}/catalog-sources-linux-\${ARCH}.yaml; then
-    echo "Unable to find catalog source for specific architecture"
-    exit 1
-  else
-    cat ~/.ibm-pak/data/mirror/\${CASE_NAME}/\${CASE_VERSION}/catalog-sources.yaml | yq '.metadata.name' | awk '!/---/' > catalog_sources_names.txt
-    oc apply -f ~/.ibm-pak/data/mirror/\${CASE_NAME}/\${CASE_VERSION}/catalog-sources-linux-\${ARCH}.yaml
-  fi
-else
-  echo "No architecture chosen. Applying all available catalog sources"
-  cat ~/.ibm-pak/data/mirror/\${CASE_NAME}/\${CASE_VERSION}/catalog-sources* | yq '.metadata.name' | awk '!/---/' > catalog_sources_names.txt
-  file_names=\`cat catalog-sources-files.txt\`
-  for file_name in $file_names; do
-    oc apply -f ~/.ibm-pak/data/mirror/\${CASE_NAME}/\${CASE_VERSION}/$file_name
-  done
-fi
-
-names=\`cat catalog_sources_names.txt\`
-echo "===== Catalog sources applied to cluster ====="
-echo $names
-
-echo "===== Waiting for catalog sources to be READY ====="
-for name in $names; do
-  echo "Waiting for $name to be READY"
-  until [[ $(oc get CatalogSource $name -n openshift-marketplace -o json | jq '.status.connectionState.lastObservedState') == "\"READY\"" ]]
-  do
-    sleep 2
-  done
-  echo "CatalogSource $name is READY"
-done
-
-$(params.SCRIPT)
-`)
-      .withWorkingDir('')
-      .withImage('quay.io/congxdev/ibm-pak-ubi:latest'));
-  }
-
-  public buildTask(): void {
-    this.delegate.buildTask();
-  }
-}
-export class IbmLakehouseManage01 extends TaskBuilder {
-  delegate: TaskBuilder;
-  public constructor(scope: Construct, id: string) {
-    super(scope, id);
-    this.delegate = new TaskBuilder(scope, id);
-    this.delegate.withName('ibm-lakehouse-manage');
-    this.delegate.withWorkspace(new WorkspaceBuilder('manifest-dir')
-      .withName('manifest-dir')
-      .withDescription(`The workspace which contains kubernetes manifests which we want to apply on the cluster.`));
-    this.delegate.withWorkspace(new WorkspaceBuilder('kubeconfig-dir')
-      .withName('kubeconfig-dir')
-      .withDescription(`The workspace which contains the the kubeconfig file if in case we want to run the oc command on another cluster.`));
-    this.delegate.withStringParam(new ParameterBuilder('IMAGE_TAG')
-      .withDescription(`Latest GA build tag for ibm-lakehouse-manage-utils`)
-      .withDefaultValue(`v1.0.3`)
-      .withPiplineParameter('IMAGE_TAG', `v1.0.3`));
-    this.delegate.withStringParam(new ParameterBuilder('SCRIPT')
-      .withDescription(`Script to run`)
-      .withDefaultValue(`oc help`)
-      .withPiplineParameter('SCRIPT', `oc help`));
-    this.delegate.withStep(new TaskStepBuilder()
-      .withName('ibm-lakehouse-manage')
-      .fromScriptData(`#!/usr/bin/env bash
-
-[[ "$(workspaces.manifest-dir.bound)" == "true" ]] && \
-cd $(workspaces.manifest-dir.path)
-
-[[ "$(workspaces.kubeconfig-dir.bound)" == "true" ]] && \
-[[ -f $(workspaces.kubeconfig-dir.path)/kubeconfig ]] && \
-export KUBECONFIG=$(workspaces.kubeconfig-dir.path)/kubeconfig && \
-cp $(workspaces.kubeconfig-dir.path)/kubeconfig /opt/ansible/.kubeconfig
-
-unset KUBECONFIG
-
-$(params.SCRIPT)
-`)
-      .withWorkingDir('')
-      .withArgs(['/usr/local/bin/entrypoint'])
-      .withImage('cp.icr.io/cpopen/watsonx-data/ibm-lakehouse-manage-utils:$(params.IMAGE_TAG)'));
-  }
-
-  public buildTask(): void {
-    this.delegate.buildTask();
-  }
-}
-export class ApplyOlmSubscription02 extends TaskBuilder {
-  delegate: TaskBuilder;
-  public constructor(scope: Construct, id: string) {
-    super(scope, id);
-    this.delegate = new TaskBuilder(scope, id);
-    this.delegate.withName('apply-olm-subscription-v0.2');
-    this.delegate.withWorkspace(new WorkspaceBuilder('manifest-dir')
-      .withName('manifest-dir')
-      .withDescription(`The workspace which contains kubernetes manifests which we want to apply on the cluster.`));
-    this.delegate.withWorkspace(new WorkspaceBuilder('kubeconfig-dir')
-      .withName('kubeconfig-dir')
-      .withDescription(`The workspace which contains the the kubeconfig file if in case we want to run the oc command on another cluster.`));
-    this.delegate.withStringParam(new ParameterBuilder('SUBSCRIPTION')
-      .withDescription(`OLM Subscription YAML`)
-      .withDefaultValue(`apiVersion: operators.coreos.com/v1alpha1
-kind: Subscription
-metadata:
-  name: subscription-name
-  namespace: openshift-operators
-spec:
-  channel: channel
-  name: subscription-name
-  source: catalog-source-name
-  sourceNamespace: openshift-marketplace
-`)
-      .withPiplineParameter('SUBSCRIPTION', `apiVersion: operators.coreos.com/v1alpha1
-kind: Subscription
-metadata:
-  name: subscription-name
-  namespace: openshift-operators
-spec:
-  channel: channel
-  name: subscription-name
-  source: catalog-source-name
-  sourceNamespace: openshift-marketplace
-`));
-    this.delegate.withStringParam(new ParameterBuilder('SCRIPT')
-      .withDescription(`Optional extra scripts`)
-      .withDefaultValue(``)
-      .withPiplineParameter('SCRIPT', ``));
-    this.delegate.withStep(new TaskStepBuilder()
-      .withName('oc')
-      .fromScriptData(`#!/usr/bin/env bash
-
-mkdir ~/tmp
-cd ~/tmp
-
-[[ "$(workspaces.manifest-dir.bound)" == "true" ]] && \
-cd $(workspaces.manifest-dir.path)
-
-[[ "$(workspaces.kubeconfig-dir.bound)" == "true" ]] && \
-[[ -f $(workspaces.kubeconfig-dir.path)/kubeconfig ]] && \
-export KUBECONFIG=$(workspaces.kubeconfig-dir.path)/kubeconfig
-
-function get_csv
-{
-  name=$1
-  namespace=$2
-  csv=$(oc get subscriptions.operators.coreos.com $name -n $namespace -o yaml | yq '.status.currentCSV')
-  echo $csv
-}
-shopt -s expand_aliases
-
-echo "===== Applying the following subscription ====="
-printf '%s' "$(params.SUBSCRIPTION)" > "./subscription.yaml"
-chmod 0755 ./subscription.yaml
-cat ./subscription.yaml
-
-subscription_name=$(cat subscription.yaml | yq '.metadata.name')
-subscription_namespace=$(cat subscription.yaml | yq '.metadata.namespace')
-echo "Subscription name: $subscription_name"
-echo "Subscription namespace: $subscription_namespace"
-
-echo "===== Removing $subscription_name in $subscription_namespace if exists ====="
-echo "Checking for existing ClusterServiceVersion"
-csv=$(get_csv $subscription_name $subscription_namespace)
-echo "CSV: $csv"
-
-if [ $csv == "null" ]; then
-  echo "ClusterServiceVersion not found. Maybe the subscription is being created. Deleting that subscription."
-  oc -n $subscription_namespace delete subscriptions.operators.coreos.com $subscription_name --ignore-not-found=true
-else
-  echo "Deleting clusterserviceversion and subscription..."
-  oc -n $subscription_namespace delete clusterserviceversions.operators.coreos.com $csv --ignore-not-found=true
-  oc -n $subscription_namespace delete subscriptions.operators.coreos.com $subscription_name --ignore-not-found=true
-fi
-
-echo "===== Installing $subscription_name in $subscription_namespace ====="
-oc apply -f subscription.yaml
-while true
-do
-  echo "Waiting for a cluster service version (CSV) for $subscription_name to be created... (wait 10s inbetween checks)"
-  csv=$(get_csv $subscription_name $subscription_namespace)
-  echo "CSV: $csv"
-  if [ $csv != "null" ]; then
-    break
-  fi
-  sleep 10
-done
-
-csv=$(get_csv $subscription_name $subscription_namespace)
-while true
-do
-  csv_phase=$(oc get -n $subscription_namespace clusterserviceversions.operators.coreos.com $csv -o yaml | yq '.status.phase')
-  if [[ $csv_phase == "Failed" ]]; then
-    echo "CSV failed. Subscription failed to be installed."
-    exit 1
-  elif [[ $csv_phase == "Succeeded" ]]; then
-    echo "CSV installed. Subscription installed."
-    break
-  else
-    echo "Waiting for csv $csv to be Successful. Current phase: $csv_phase... (wait 10s inbetween checks)"
-  fi
-  sleep 10
-done
-
-$(params.SCRIPT)
-`)
-      .withWorkingDir('')
-      .withImage('quay.io/congxdev/ibm-pak-ubi:latest'));
   }
 
   public buildTask(): void {

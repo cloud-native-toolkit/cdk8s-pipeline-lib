@@ -1,6 +1,6 @@
-import { TektonHubTask } from './tektonHubTasksResolver';
-import { Construct } from 'constructs';
 import { TaskBuilder } from 'cdk8s-pipelines';
+import { Construct } from 'constructs';
+import { TektonHubTask } from './tektonHubTasksResolver';
 export const git_cli = function(scope: Construct, id: string) : TaskBuilder { return new TektonHubTask(scope, id, 'https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-cli/0.4/git-cli.yaml').build(); };
 export const gogit = function(scope: Construct, id: string) : TaskBuilder { return new TektonHubTask(scope, id, 'https://raw.githubusercontent.com/tektoncd/catalog/main/task/gogit/0.1/gogit.yaml').build(); };
 export const golang_build = function(scope: Construct, id: string) : TaskBuilder { return new TektonHubTask(scope, id, 'https://raw.githubusercontent.com/tektoncd/catalog/main/task/golang-build/0.3/golang-build.yaml').build(); };

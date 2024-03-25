@@ -33,6 +33,7 @@ const project = new cdk8s.ConstructLibraryCdk8s({
   ],
   gitignore: [
     '.idea/',
+    'cache/',
   ],
 });
 // Create the tekton hub tasks
