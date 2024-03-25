@@ -10,7 +10,6 @@ const project = new cdk8s.ConstructLibraryCdk8s({
   cdk8sVersion: '2.68.30',
   jsiiVersion: '~5.2.0',
   workflowNodeVersion: '18.x',
-  mutableBuild: true,
   projenrcTs: true,
   bundledDeps: [
     'octokit',
