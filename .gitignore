@@ -32,6 +32,7 @@ jspm_packages/
 .cache
 .idea/
 cache/
+src/deployerTektonTasks/generatedDeployerTasks.ts
 !/.projenrc.js
 /test-reports/
 junit.xml

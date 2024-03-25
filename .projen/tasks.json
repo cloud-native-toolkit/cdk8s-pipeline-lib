@@ -196,7 +196,7 @@
           "exec": "npx ts-node src/tektonHub/CreateTektonHubLink.ts"
         },
         {
-          "exec": "npx ts-node src/deployerTektonTasks/CreateDeployerRepoLink.ts && npx eslint --fix src/deployerTektonTasks/generatedDeployerTasks.ts"
+          "exec": "npx ts-node src/deployerTektonTasks/CreateDeployerRepoLink.ts"
         }
       ]
     },
